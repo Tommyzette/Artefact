@@ -193,10 +193,64 @@ body::after{content:"";position:fixed;inset:7px;pointer-events:none;border:1px s
  .abtn{font-size:11px;min-height:35px}
 }
 
+
+/* ===== Layout v2: nessuna legenda sopra al campo =====
+   Nero in striscia sopra, Bianco in striscia sotto, cronologia a tendina nella barra in alto,
+   Fine turno nella barra delle abilità. Il campo occupa tutto lo spazio che resta. */
+body{overflow:hidden}
+#hd{position:relative;display:flex;align-items:center;gap:6px;width:calc(100% - 16px);max-width:544px;min-height:38px;margin:calc(env(safe-area-inset-top,0px) + 7px) 0 4px;z-index:5}
+#hd #st{flex:1;min-width:0;max-width:none;margin:0;padding:5px 8px;font-size:12px;line-height:1.25;text-align:center}
+#hx{position:relative;flex:none}
+#hxBtn{width:38px;height:38px;padding:0;border-radius:50%;border:2px solid #f4d58b;background:linear-gradient(180deg,#a45b27,#673414);color:#fff0c8;font-size:17px;line-height:1;box-shadow:0 2px 0 #2a1509}
+#hxBody{position:absolute;right:0;top:calc(100% + 6px);width:min(270px,calc(100vw - 20px));max-height:46vh;overflow:auto;z-index:30;padding:8px 10px;border:2px solid #c99e52;border-radius:12px;background:linear-gradient(145deg,#392515fa,#170e09fa);color:#f1dfbd;font-size:11px;line-height:1.35;box-shadow:0 8px 20px #000c}
+#hxBody[hidden]{display:none}
+#hxBody .he{border-top:1px solid #e5c47b55;margin-top:5px;padding-top:5px}
+#hxBody .he:first-child{border:0;margin:0;padding:0}
+#hxBody .he strong{color:#ffdc83}
+#hxBody .he span{display:block;margin-top:2px}
+.lgs{flex:none;display:flex;align-items:center;gap:5px;width:calc(100% - 16px);max-width:544px;min-height:40px;padding:4px 6px;border:2px solid #c89c51;border-radius:13px;background:linear-gradient(145deg,#382414f5,#170e09f5);box-shadow:inset 0 0 0 2px #f4d88b22,0 3px 8px #000a;color:#f6e4bc}
+.lgs.act{border-color:#ffe18a;box-shadow:inset 0 0 0 2px #ffe18a55,0 0 14px #ffdc6d99,0 3px 8px #000a}
+.lgs .lh{flex:none;min-width:52px;padding-right:6px;border-right:1px solid #e5c47b55;text-align:left;font-size:11px;line-height:1.25}
+.lgs .lr{flex:1;min-width:0;display:flex;align-items:center;gap:3px}
+.lgs .tk{width:24px;height:24px}
+.lgs .lv{flex:1;min-width:0}
+.lgs .bar2{height:6px;margin:0 0 2px}
+.lgs .lv small{display:block;font-size:9px;line-height:1;white-space:nowrap}
+#cv{flex:1 1 0;min-height:0;width:100%}
+#ab{flex:none;display:grid;grid-template-columns:repeat(6,1fr);gap:5px;width:calc(100% - 16px);max-width:544px;min-height:0;padding:4px 0 calc(8px + env(safe-area-inset-bottom,0px))}
+#abl{display:contents}
+#ab .abtn{flex-direction:column;justify-content:center;gap:1px;min-width:0;min-height:46px;padding:3px 2px;border-radius:12px;font-size:11px}
+#ab .abtn .tk{width:24px;height:24px}
+#ab #et{grid-column:6;grid-row:1;min-width:0;min-height:46px;margin:0;padding:3px 2px;font:700 11px/1.15 Georgia,serif;border-radius:12px!important}
+
+/* ===== Slide iniziali e tutorial ===== */
+.hc{max-width:360px;width:100%;gap:12px}
+.hi{font-size:44px}
+.hc h3{font-size:24px}
+.hb{width:100%;font-size:15.5px;line-height:1.45;text-align:left}
+.hb2{font-size:15.5px;line-height:1.5;margin-top:10px}
+.hl{display:flex;flex-direction:column;gap:11px;text-align:left}
+.hl>div{display:flex;gap:10px;align-items:center;font-size:15.5px;line-height:1.4}
+.hl i{flex:none;width:34px;text-align:center;font-style:normal;font-size:25px;line-height:1;color:#ffd77a;font-weight:700}
+.hz{display:flex;gap:12px;align-items:center;text-align:left}
+.hz .hl>div{font-size:13.5px}
+.hc .mb{min-width:170px}
+.mb.sec{background:#ffffff26!important;border-color:#ffffff66!important;box-shadow:none!important}
+#tut{flex:none;width:calc(100% - 16px);max-width:544px;margin:4px 0 2px;padding:8px 11px;border:2px solid #ffd77a;border-radius:13px;background:linear-gradient(145deg,#4a3216fa,#1d120bfa);color:#ffedc6;font-size:12.5px;line-height:1.4;box-shadow:0 0 14px #ffd77a55}
+#tut[hidden]{display:none}
+#tut .tt{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;color:#ffd77a;font-size:13px}
+#tut .tt a{font-size:11px;opacity:.75;text-decoration:underline}
+#tut .tb{display:flex;gap:8px;justify-content:center;margin-top:7px}
+#tut .tb .mb{min-width:0;padding:6px 18px;font-size:13px}
+.tp{animation:tpp 1s ease-in-out infinite alternate}
+@keyframes tpp{to{box-shadow:0 0 0 3px #ffd23a,0 0 16px #ffd23a}}
 </style><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head><body>
-<div id="st"></div><button id="et" onclick="endT()">Fine turno</button>
-<div id="cv"><div class="lgp" id="lg1"></div><div class="lgp" id="lg2"></div><section id="hist" class="collapsed"><button id="histToggle" type="button" aria-expanded="false" onclick="toggleHistory()"><span>📜 CRONOLOGIA</span><span id="histArrow">＋</span></button><div id="histbody">In attesa della partita</div></section></div>
-<div id="ab"></div>
+<div id="hd"><div id="st"></div><div id="hx"><button id="hxBtn" type="button" aria-expanded="false" aria-label="Cronologia" onclick="toggleHistory()">📜</button><div id="hxBody" hidden>In attesa della partita</div></div></div>
+<div class="lgs" id="lg2"></div>
+<div id="cv"></div>
+<div id="tut" hidden></div>
+<div class="lgs" id="lg1"></div>
+<div id="ab"><div id="abl"></div><button id="et" onclick="endT()">Fine turno</button></div>
 <div id="hw"></div><div id="tip" onclick="this.style.display='none'"></div><div id="dr"></div><div id="o"><div id="ot"></div><button onclick="init()">Nuova partita</button></div>
 <script>
 const IC={M:'<path d="M2 3c1 6 4 8 6 8h8c2 0 5-2 6-8-2 3-4 4-6 4H8C6 7 4 6 2 3z"/><path d="M8 10h8l-1 8-3 4-3-4z"/>',P:'<path d="M3 21C3 11 9 4 21 3c-3 3-4 5-5 7 2-1 4-1 5-1-3 2-5 4-6 6 1 0 2 0 3 0-3 3-7 5-12 5z"/>',U:'<path d="M11 2v14H4zM13 5l7 11h-7zM3 18h18l-3 4H6z"/>',C:'<circle cx="5.5" cy="8" r="3.2"/><circle cx="12" cy="6" r="3.2"/><circle cx="18.5" cy="8" r="3.2"/><path d="M3 21c0-6 3-9 9-9s9 3 9 9z"/>',A:'<path d="M4 21V11a8 8 0 0 1 16 0v10h-5v-6H9v6z"/><path d="M12 2c4 0 6 2 7 4-3-1-5-1-7-1z"/>',H:'<path d="M9 2c4-1 8 1 8 5 0 3-2 5-4 6l-1 9H9l1-9C7 12 6 9 6 6c0-2 1-3 3-4z"/>',I:'<path d="M12 2l8 3v7c0 5-4 8-8 10-4-2-8-5-8-10V5z"/>',R:'<circle cx="12" cy="14" r="4"/><circle cx="12" cy="8" r="2.4"/><path d="M9 12L2 6l1-1 7 6zM8 14H1v-1.5h7zM9 17l-6 5-1-1 6-5zM11 18l-2 5-1.5-.5 2-5zM15 12l7-6-1-1-7 6zM16 14h7v-1.5h-7zM15 17l6 5 1-1-6-5zM13 18l2 5 1.5-.5-2-5z"/>',N:'<path d="M3 8h3v12H3zM7 6h3v14H7zM11 4h3v16h-3zM15 6h3v14h-3zM19 8h3v12h-3z"/>',S:'<path d="M11 8h2v14h-2zM4 3h2v7c0 2 2 3 5 3v2c-4 0-7-2-7-5zM18 3h2v7c0 3-3 5-7 5v-2c3 0 5-1 5-3zM11 2h2l-1 5z"/>'};
@@ -250,7 +304,7 @@ S:{c:4,k:"t",n:3,run:blkTiles},R:{c:2,k:"t",n:2,zone:1,run:blkTiles},
 I:{c:3,run:q=>{q.hp+=2;q.mh+=2;q.ba=(q.ba||0)+1}},P:{c:4,run:q=>{q.hp=Math.min(q.mh,q.hp+2)}},
 A:{c:5,run:q=>pcs(q.p).forEach(z=>{if(HERO.has(z.t))z.hp=Math.min(z.mh,z.hp+2)})},
 C:{c:5,run:q=>{q.tb=(q.tb||0)+3}},M:{c:5,run:q=>{q.tb=(q.tb||0)+4}}};
-function chkElim(){const a=pcs(1).length,b=pcs(2).length;if(!a&&b){win(2,"squadra eliminata");return true}if(!b&&a){win(1,"squadra eliminata");return true}return false}
+function chkElim(){const a=pcs(1).length,b=pcs(2).length;if(!a&&!b){win(0,"eliminazione simultanea");return true}if(!a&&b){win(2,"squadra eliminata");return true}if(!b&&a){win(1,"squadra eliminata");return true}return false}
 function abTiles(){const o=[];for(let r=0;r<13;r++)for(let c=0;c<9;c++)if(!ab.zone||zone(turn,r)=="D")o.push([r,c]);return o}
 function targets(){if(ab)return ab.k=="e"?ab.list:abTiles();if(!sel)return[];const q=bd[sel.r][sel.c];if(!q)return[];return mvOf(q).concat(atOf(q))}
 function startTurn(p){SQ.forEach(([a,b,v])=>{let m=0,e=0;for(let r=5;r<=7;r++)for(let c=a;c<=b;c++){const q=bd[r][c];if(q)q.p==p?m++:e++}if(m>e)mana[p]+=v});
@@ -258,18 +312,24 @@ function startTurn(p){SQ.forEach(([a,b,v])=>{let m=0,e=0;for(let r=5;r<=7;r++)fo
  if(!hl[p]&&mana[p]>=potCost("U")&&has(p,"U")){hl[p]=1;pcs(p).forEach(q=>{if(HERO.has(q.t)){q.hp+=2;q.mh+=2}});eventLog("Ulisse: +2 PV agli eroi (una sola volta)")}
  if(!pb[p]&&mana[p]>=potCost("S")&&has(p,"S")){pb[p]=1;const r=p==1?4:8;for(let c=0;c<9;c++)blk.push({r,c,p:p==1?2:1,t:2})}
  if(mana[p]>=25){win(p,"25 potere");return true}return false}
+function decay(){if(turn!=1||Math.floor(tc/2)+1<=30)return false;
+ eventLog("☠ Logoramento: tutti i pezzi perdono 1 PV");
+ bd.forEach(rw=>rw.forEach(q=>{if(q){q.hp--;if(q.hp<=0)bd[q.r][q.c]=null}}));
+ const a=pcs(1).length,b=pcs(2).length;
+ if(!a&&!b){win(0,"gli ultimi pezzi sono caduti insieme");return true}
+ if(!a){win(2,"logoramento");return true}if(!b){win(1,"logoramento");return true}return false}
 function endTurn(){ab=null;sel=null;const f=turn,o=f==1?2:1;
  bd.forEach(rw=>rw.forEach(q=>{if(q&&q.p==f){q.mv=0;q.at=0;q.tb=0;if(q.fz>0)q.fz--;if(q.sl>0)q.sl--}}));
  blk.forEach(e=>{if(e.p==f)e.t--});blk=blk.filter(e=>e.t>0);
- history.push({player:NM[f],turn:Math.floor(tc/2)+1,events:turnEvents.slice()});history=history.slice(-2);turnEvents=[];turn=o;tc++;mvL=2;atL=5;if(startTurn(o))return;
+ history.push({player:NM[f],turn:Math.floor(tc/2)+1,events:turnEvents.slice()});history=history.slice(-2);turnEvents=[];turn=o;tc++;mvL=2;atL=5;if(decay())return;if(startTurn(o))return;
  draw();if(ai&&turn==2)setTimeout(aiStep,700)}
-function endT(){if(over||(ai&&turn==2)||!(mvL==0||!anyMove(turn)))return;endTurn()}
-function useAb(k){if(over||(ai&&turn==2))return;const q=has(turn,k),a=AB[k];if(!q||imp[turn]<a.c)return;
+function endT(){if(over||(ai&&turn==2)||!(mvL==0||!anyMove(turn)))return;if(tut&&tutStep()!=5)return;endTurn();if(tut&&turn==2)setTimeout(()=>{if(tut&&turn==2&&!over)endTurn()},700)}
+function useAb(k){if(over||(ai&&turn==2))return;if(tut&&(k!="I"||tutStep()!=4))return;const q=has(turn,k),a=AB[k];if(!q||imp[turn]<a.c)return;
  if(ab&&ab.t==k){ab=null;draw();return}
  if(!a.k){a.run(q);imp[turn]-=a.c;eventLog(CH[k].n+" usa la sua abilità");ab=null;draw();return}
  if(a.k=="e"){const l=a.list(q);if(!l.length){el("st").textContent="Nessun bersaglio nel raggio";setTimeout(draw,1200);return}ab={t:k,q,c:a.c,k:"e",list:l}}
  else ab={t:k,q,c:a.c,k:"t",n:a.n,zone:a.zone,picks:[]};sel=null;draw()}
-function tap(r,c,f){if(over||(ai&&turn==2&&!f))return;
+function tap(r,c,f){if(over||(ai&&turn==2&&!f))return;if(tut&&!tutOk(r,c))return;
  if(ab){if(!targets().some(t=>t[0]==r&&t[1]==c)){ab=null;draw();return}
   if(ab.k=="e"){AB[ab.t].run(ab.q,bd[r][c]);imp[turn]-=ab.c;eventLog(CH[ab.t].n+" usa la sua abilità");ab=null;if(chkElim())return;draw();return}
   const i=ab.picks.findIndex(t=>t[0]==r&&t[1]==c);if(i>=0)ab.picks.splice(i,1);else ab.picks.push([r,c]);
@@ -277,22 +337,26 @@ function tap(r,c,f){if(over||(ai&&turn==2&&!f))return;
  if(sel&&targets().some(t=>t[0]==r&&t[1]==c)){const q=bd[sel.r][sel.c],x=bd[r][c];sel=null;
   if(x){attack(q,x);if(chkElim())return}else if(mvTo(q,r,c))return;draw();return}
  const q=bd[r][c];sel=q&&q.p==turn?{r,c}:null;draw()}
-function aiMoveBest(p){const o=p==1?2:1,E=ART[o],H=ART[p],w=Math.max(.25,1-tc/60);let best=null,bs=-1e9;
+const DW={pg:3,pgt:.1,sq:5,sq0:6,sql:4,off:4,dA:14,lA:25,mn:45,dg:2.5,dk:20,ap:0,ret:0,aB:8,aD:6,aK:80,aE:40,aH:0,aA:0,nz:3};
+/* pesi appresi con 40.000+ partite di auto-allenamento (contro sé stesso e contro la versione precedente) */
+const LW={"pg":4.292,"pgt":0.132,"sq":1.932,"sq0":2.165,"sql":0.275,"off":25.627,"dA":28.231,"lA":2.164,"mn":2.031,"dg":0.298,"dk":2.586,"ap":1.984,"ret":3.142,"aB":3.394,"aD":25.613,"aK":16.187,"aE":15.244,"aH":-0.324,"aA":1.797,"nz":0.98};
+let AW={1:DW,2:DW},lvl=null;
+function aiMoveBest(p){const o=p==1?2:1,E=ART[o],H=ART[p],w=Math.max(.25,1-tc/60),W=AW[p],es=pcs(o),dn=(x,y)=>es.length?Math.min(...es.map(e=>Math.max(Math.abs(e.r-x),Math.abs(e.c-y)))):0;let best=null,bs=-1e9;
  const sqv=(a,b)=>{if(a<5||a>7)return 0;return SQ.find(z=>b>=z[0]&&b<=z[1])[2]};
  pcs(p).forEach(q=>{if(!canMv(q))return;const r=q.r,c=q.c;
   rawMv(r,c).forEach(([a,b])=>{let s;
    if(a==E[0]&&b==E[1])s=1000;
-   else{s=(Math.max(Math.abs(r-E[0]),Math.abs(c-E[1]))-Math.max(Math.abs(a-E[0]),Math.abs(b-E[1])))*(3+tc/10);
-    s+=sqv(a,b)*5+(sqv(a,b)?6:0)-(sqv(r,c)?4:0)+(zone(p,a)=="O"?4:0);
-    if(a==H[0]&&b==H[1])s+=14;if(r==H[0]&&c==H[1])s-=25;
-    if(MA.find(m=>!m.done&&m.p==p&&m.r==a&&m.c==b))s+=45;
+   else{s=(Math.max(Math.abs(r-E[0]),Math.abs(c-E[1]))-Math.max(Math.abs(a-E[0]),Math.abs(b-E[1])))*(W.pg+tc*W.pgt)+W.ap*(dn(r,c)-dn(a,b))+(q.hp<q.mh*.5?W.ret*(dn(a,b)-dn(r,c)):0);
+    s+=sqv(a,b)*W.sq+(sqv(a,b)?W.sq0:0)-(sqv(r,c)?W.sql:0)+(zone(p,a)=="O"?W.off:0);
+    if(a==H[0]&&b==H[1])s+=W.dA;if(r==H[0]&&c==H[1])s-=W.lA;
+    if(MA.find(m=>!m.done&&m.p==p&&m.r==a&&m.c==b))s+=W.mn;
     bd[a][b]=q;bd[r][c]=null;
-    if(!q.sh)pcs(o).forEach(e=>{if(rawAt(e.r,e.c).some(t=>t[0]==a&&t[1]==b))s-=(Math.max(1,atk(e)-armor(q))*2.5+(atk(e)>=q.hp?20:0))*w});
+    if(!q.sh)pcs(o).forEach(e=>{if(rawAt(e.r,e.c).some(t=>t[0]==a&&t[1]==b))s-=(Math.max(1,atk(e)-armor(q))*W.dg+(atk(e)>=q.hp?W.dk:0))*w});
     bd[r][c]=q;bd[a][b]=null}
-   s+=Math.random()*3;if(s>bs){bs=s;best={r,c,a,b}}})});return best}
-function aiAtkBest(p){const E=ART[p==1?2:1];let best=null,bs=0;
+   s+=Math.random()*W.nz;if(s>bs){bs=s;best={r,c,a,b}}})});return best}
+function aiAtkBest(p){const E=ART[p==1?2:1],W=AW[p];let best=null,bs=0;
  pcs(p).forEach(q=>{if(!canAt(q))return;rawAt(q.r,q.c).forEach(([a,b])=>{const x=bd[a][b],d=x.sh?0:Math.max(1,atk(q)-armor(x));
-  const s=8+d*6+(!x.sh&&x.hp<=d?80:0)+(a==E[0]&&b==E[1]?40:0)+Math.random()*3;if(s>bs){bs=s;best={r:q.r,c:q.c,a,b}}})});return best}
+  const s=W.aB+d*W.aD+(!x.sh&&x.hp<=d?W.aK:0)+(a==E[0]&&b==E[1]?W.aE:0)+W.aH*(1-x.hp/x.mh)+W.aA*atk(x)+Math.random()*W.nz;if(s>bs){bs=s;best={r:q.r,c:q.c,a,b}}})});return best}
 function aiAbility(p){for(const k of["M","C","I","P","A","N","H","S","R"]){const q=has(p,k),a=AB[k];if(!q||imp[p]<a.c)continue;
   if(k=="S"||k=="R"){const o=p==1?2:1,en=pcs(o),cand=[];for(let r=0;r<13;r++)for(let c=0;c<9;c++){if(bd[r][c]||isBlk(r,c,o))continue;let sc=0;en.forEach(z=>{const d=Math.max(Math.abs(z.r-r),Math.abs(z.c-c));if(d<=2)sc+=(3-d)*2});if(r>=5&&r<=7)sc+=2;if(r==ART[p][0]&&c==ART[p][1])sc+=3;if(r==ART[o][0]&&c==ART[o][1])sc+=3;cand.push({r,c,sc})}cand.sort((x,y)=>y.sc-x.sc);const n=k=="S"?3:2,chosen=[];for(const z of cand){if(chosen.every(t=>t[0]!=z.r||t[1]!=z.c))chosen.push([z.r,z.c]);if(chosen.length==n)break}if(chosen.length==n&&chosen.some(z=>cand.find(v=>v.r==z[0]&&v.c==z[1]).sc>0)){imp[p]-=a.c;a.run(q,chosen);eventLog(CH[k].n+" blocca "+n+" caselle");return true}continue;}
   if(k=="M"||k=="C"){if(!(atL>0&&canAt(q)&&rawAt(q.r,q.c).length))continue}
@@ -309,7 +373,7 @@ function deploy(){bd=Array.from({length:13},()=>Array(9).fill(null));
  [1,2].forEach(p=>team[p].forEach((k,i)=>{const q={t:k,p,hp:CH[k].hp,mh:CH[k].hp,r:entry(p),c:COLS[i]};bd[q.r][q.c]=q}));
  mana={1:0,2:0};imp={1:0,2:0};hl={1:0,2:0};pb={1:0,2:0};blk=[];tc=0;turn=1;mvL=1;atL=5;sel=null;history=[];turnEvents=[];ab=null;over=false;
  MA=[{p:1,k:"s",r:11,c:8},{p:1,k:"h",r:11,c:0},{p:2,k:"s",r:1,c:0},{p:2,k:"h",r:1,c:8}]}
-function init(){ai=null;team={1:[],2:[]};deploy();el("o").style.display="none";draw();draft()}
+function init(){ai=null;lvl=null;AW={1:DW,2:DW};team={1:[],2:[]};deploy();el("o").style.display="none";draw();draft()}
 let cv,R,scene,camera,pieceG,tileG,maG,ray,pt,selG,tiles=[],cry=[];const GC={},MC={},BC={},BT={},TM={};
 const geo=(k,f)=>GC[k]||(GC[k]=f()),mat=c=>MC[c]||(MC[c]=new THREE.MeshPhongMaterial({color:c,flatShading:true})),bm=c=>BC[c]||(BC[c]=new THREE.MeshBasicMaterial({color:c}));
 const cy=(a,b,h,n)=>geo("c"+[a,b,h,n],()=>new THREE.CylinderGeometry(a,b,h,n)),co=(r,h,n)=>cy(0,r,h,n);
@@ -360,7 +424,7 @@ function initScene(){cv=el("cv");R=new THREE.WebGLRenderer({antialias:true});R.s
  dom.addEventListener("pointerup",()=>{clearTimeout(tm);if(dn&&!fired){const c=pick(dn);if(c)tap(c[0],c[1])}dn=null});
  dom.addEventListener("contextmenu",e=>e.preventDefault());
  el("ab").onclick=e=>{const b=e.target.closest(".abtn");if(b)useAb(b.dataset.k)};
- if(window.ResizeObserver)new ResizeObserver(fit).observe(cv);window.addEventListener("resize",fit);
+ if(window.ResizeObserver)new ResizeObserver(fit).observe(cv);window.addEventListener("resize",fit);window.addEventListener("pointerdown",e=>{const b=el("hxBody");if(b&&!b.hidden&&!(e.target.closest&&e.target.closest("#hx")))b.hidden=true});
  R.setAnimationLoop(t=>{cry.forEach((c,i)=>{c.rotation.y=t/700;c.position.y=.8+Math.sin(t/500+i)*.08});
   maG.children.forEach(m=>{m.rotation.y=t/600});
   if(selG&&selG.children[1])selG.children[1].position.y=.7+Math.abs(Math.sin(t/160))*.1;R.render(scene,camera)});
@@ -369,19 +433,19 @@ function fit(){if(!R)return;const w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)r
  for(let d=8;d<60;d+=.4){camera.position.set(0,d*Math.sin(1.08),d*Math.cos(1.08));camera.lookAt(0,0,0);camera.updateProjectionMatrix();camera.updateMatrixWorld();
   if([[-4.7,0,6.7],[4.7,0,6.7],[-4.7,0,-6.7],[4.7,0,-6.7],[0,1.6,-6.7],[-4.7,1.6,-6.7],[4.7,1.6,-6.7]].every(q=>{const v=new THREE.Vector3(q[0],q[1],q[2]).project(camera);return Math.abs(v.x)<=.98&&v.y<=.97&&v.y>=-.97}))break}
  draw()}
-function legend(p){const e=el("lg"+p);if(!e)return;e.className="lgp"+(turn==p&&!over?" act":"");
+function legend(p){const e=el("lg"+p);if(!e)return;e.className="lgs"+(turn==p&&!over?" act":"");
  let h='<div class="lh">'+NM[p]+'<br>⚡'+(mana?mana[p]:0)+' 🔥'+(imp?imp[p]:0)+'</div>';
  (team&&team[p]||[]).forEach(k=>{const q=pcs(p).find(z=>z.t==k);h+='<div class="lr'+(q?'':' dead')+'" data-k="'+k+'"><span class="tk p'+p+'">'+ico(k)+'</span><div class="lv"><i class="bar2 pb'+p+'"><u style="width:'+(q?Math.max(0,Math.min(100,100*q.hp/q.mh)):0)+'%"></u></i><small>'+(q?q.hp:0)+'/'+(q?q.mh:CH[k].hp)+'</small></div></div>'});
  e.innerHTML=h;e.querySelectorAll(".lr").forEach(r=>{const k=r.dataset.k;lpress(r,()=>tip(k,pcs(p).find(z=>z.t==k)))})}
-function abBar(){const b=el("ab");if(!b)return;if(over||!bd||(ai&&turn==2)){b.innerHTML="";return}
- b.innerHTML=pcs(turn).map(q=>{const a=AB[q.t];return'<button class="abtn'+(ab&&ab.t==q.t?' on':'')+'"'+(imp[turn]<a.c?' disabled':'')+' data-k="'+q.t+'"><span class="tk p'+turn+'">'+ico(q.t)+'</span>🔥'+a.c+'</button>'}).join("")}
-function toggleHistory(){const h=el("hist"),b=h.classList.toggle("collapsed");el("histToggle").setAttribute("aria-expanded",String(!b));el("histArrow").textContent=b?"＋":"−"}
-function renderHistory(){const e=el("histbody");if(!e)return;if(!history.length){e.textContent="Nessun turno concluso";return}e.innerHTML=history.slice().reverse().map(h=>"<div class=\"he\"><strong>"+h.player+" · T"+h.turn+"</strong><span>"+(h.events.length?h.events.slice(-4).join(" · "):"Nessuna azione registrata")+"</span></div>").join("")}
-function draw(){let s="⏳ "+(Math.floor(tc/2)+1)+" · Turno: "+NM[turn]+" · Mosse "+mvL+" · Attacchi "+atL+"/5";
+function abBar(){const b=el("abl");if(!b)return;if(over||!bd||(ai&&turn==2)){b.innerHTML="";return}
+ b.innerHTML=pcs(turn).map(q=>{const a=AB[q.t];return'<button class="abtn'+(ab&&ab.t==q.t?' on':'')+(tut&&tutStep()==4&&q.t=="I"?' tp':'')+'"'+(imp[turn]<a.c?' disabled':'')+' data-k="'+q.t+'"><span class="tk p'+turn+'">'+ico(q.t)+'</span>🔥'+a.c+'</button>'}).join("")}
+function toggleHistory(){const b=el("hxBody"),o=b.hidden;b.hidden=!o;el("hxBtn").setAttribute("aria-expanded",String(o))}
+function renderHistory(){const e=el("hxBody");if(!e)return;if(!history.length){e.textContent="Nessun turno concluso";return}e.innerHTML=history.slice().reverse().map(h=>"<div class=\"he\"><strong>"+h.player+" · T"+h.turn+"</strong><span>"+(h.events.length?h.events.slice(-4).join(" · "):"Nessuna azione registrata")+"</span></div>").join("")}
+function draw(){let s="⏳ "+(Math.floor(tc/2)+1)+" · "+NM[turn]+" · Mosse "+mvL+" · Att. "+atL+"/5"+(Math.floor(tc/2)+1>30?" · ☠ −1 PV":"");
  if(ab)s+=" · "+(ab.k=="e"?"scegli il bersaglio":"scegli "+ab.n+" caselle ("+ab.picks.length+")");
- el("st").textContent=s;renderHistory();el("et").disabled=over||!!(ai&&turn==2)||!(mvL==0||!anyMove(turn));legend(1);legend(2);abBar();
+ el("st").textContent=s;renderHistory();el("et").disabled=over||!!(ai&&turn==2)||!(mvL==0||!anyMove(turn))||!!(tut&&tutStep()!=5);el("et").classList.toggle("tp",!!(tut&&tutStep()==5&&turn==1));tutUI();legend(1);legend(2);abBar();
  if(!R||!tiles.length)return;
- const tg=targets(),tset=new Set(tg.map(t=>t[0]+","+t[1])),sq=SQ.map(z=>{let m=[0,0,0];for(let r=5;r<=7;r++)for(let c=z[0];c<=z[1];c++){const q=bd[r][c];if(q)m[q.p]++}
+ const tg=targets().filter(t=>!tut||tutOk(t[0],t[1])),tset=new Set(tg.map(t=>t[0]+","+t[1])),sq=SQ.map(z=>{let m=[0,0,0];for(let r=5;r<=7;r++)for(let c=z[0];c<=z[1];c++){const q=bd[r][c];if(q)m[q.p]++}
   return m[1]&&!m[2]?0x3a5fd0:m[2]&&!m[1]?0x9a3a6a:z[2]==2?0x7a55e8:0x5a45b8});
  selG=null;
  tiles.forEach(t=>{const r=t.r,c=t.c,q=bd[r][c],k=(r+c)%2;let col=k?0x2e2b55:0x27244a;
@@ -391,6 +455,7 @@ function draw(){let s="⏳ "+(Math.floor(tc/2)+1)+" · Turno: "+NM[turn]+" · Mo
   if(tset.has(r+","+c))col=ab?0xff9a3a:q?0xe53935:0x2fbf7a;
   if(ab&&ab.picks&&ab.picks.some(z=>z[0]==r&&z[1]==c))col=0xffd23a;
   if(sel&&sel.r==r&&sel.c==c)col=0x9cffd0;
+  if(tut){const ts=tutStep();if((ts==0&&r==4&&c==1)||(ts==2&&r==7&&c==1))col=0xffd23a}
   t.m.material.color.setHex(col)});
  while(pieceG.children.length)pieceG.remove(pieceG.children[0]);while(maG.children.length)maG.remove(maG.children[0]);
  MA.forEach(m=>{if(!m.done)maG.add(crystal(m.c-4,6-m.r,m.k=="s"?0x7ff0ff:0x6aff9a,m.p==1?0x1a3a90:0x901a2a,.7))});
@@ -406,21 +471,45 @@ function card(t,q){const d=CH[t];let h='<strong>'+d.n+'</strong> <em class="fm">
  if(q){const s=[];if(q.sh)s.push("scudo divino");if(armor(q))s.push("armatura "+armor(q));if(q.fz>0)s.push("non può muoversi");if(q.sl>0)s.push("addormentato");if(s.length)h+='<br><u>'+s.join(", ")+'</u>'}return h}
 function tip(t,q){const e=el("tip");e.innerHTML='<div><b>'+ico(t)+'</b>'+card(t,q)+'</div>';e.style.display="flex"}
 function lpress(e,fn){let tm;e.addEventListener("pointerdown",()=>{lp=0;tm=setTimeout(()=>{lp=1;fn()},450)});["pointerup","pointerleave","pointercancel"].forEach(ev=>e.addEventListener(ev,()=>clearTimeout(tm)));e.addEventListener("contextmenu",x=>x.preventDefault())}
-function win(p,w){over=true;draw();el("ot").textContent="Vince il "+NM[p]+"!"+(w?" ("+w+")":"");el("o").style.display="flex"}
-function setAi(v){ai=v;draft()}
+function win(p,w){over=true;draw();el("ot").textContent=(p?"Vince il "+NM[p]+"!":"Pareggio!")+(w?" ("+w+")":"");el("o").style.display="flex"}
+function setAi(v){ai=v;lvl=null;AW={1:DW,2:DW};draft()}
+function setLvl(v){lvl=v;AW={1:DW,2:v?LW:DW};draft()}
 function draft(){const d=el("dr");d.style.display="flex";
- if(ai===null){d.innerHTML='<div class="dt">Come vuoi giocare?</div><button class="mb" onclick="setAi(0)">2 giocatori</button><button class="mb" onclick="setAi(1)">Contro il computer</button><button class="mb" style="background:#ffffff26" onclick="howto(0)">Come si gioca</button>';return}
+ if(ai===null){d.innerHTML='<div class="dt">Come vuoi giocare?</div><button class="mb" onclick="setAi(0)">2 giocatori</button><button class="mb" onclick="setAi(1)">Contro il computer</button><button class="mb sec" onclick="startTut()">Tutorial veloce</button><button class="mb sec" onclick="howto(0)">Come si gioca</button>';return}
+ if(ai===1&&lvl===null){d.innerHTML='<div class="dt">Difficoltà del computer</div><button class="mb" onclick="setLvl(0)">Normale</button><button class="mb" onclick="setLvl(1)">Esperto (addestrato)</button>';return}
  d.innerHTML='<div class="dt">Bianco: scegli la squadra</div><div class="lg">Tocca un personaggio per vedere la sua scheda. L’altra squadra va al Nero'+(ai?' (computer)':'')+'.</div>'+Object.keys(TEAMS).map(k=>'<div class="tm"><h4>'+TN[k]+'</h4><div class="trow">'+TEAMS[k].map(t=>'<button class="tkb p1" onclick="tip(\''+t+'\')">'+ico(t)+'</button>').join("")+'</div><button class="mb" onclick="pickTeam(\''+k+'\')">Scegli</button></div>').join("")}
 function pickTeam(k){team={1:TEAMS[k].slice(),2:TEAMS[k=="E"?"B":"E"].slice()};el("dr").style.display="none";deploy();draw()}
-const HW=[["🎯","Obiettivo","Porta un tuo pezzo sull’<b>artefatto avversario</b> (★), oppure <b>elimina tutta la sua squadra</b>, oppure sii il primo ad arrivare a <b>25 potere</b>."],
-["🔁","Il turno","Il primo turno muovi <b>1 pezzo</b>. Poi, a ogni turno, muovi <b>2 pezzi diversi</b> e attacca fino a <b>5 volte</b>, una volta con ciascun personaggio. Nel primo turno del Bianco si muove 1 solo pezzo. Tocca sempre <b>Fine turno</b> per passare."],
-["🗺️","Le tre zone","Il campo ha una zona <b>difensiva</b> (5 righe), una di <b>battaglia</b> (3 righe) e una <b>offensiva</b> (5 righe). A inizio turno ogni tuo pezzo nella zona offensiva ti dà <b>1 impeto 🔥</b> (massimo 20)."],
-["⚡","Il potere","I 3 quadrati viola al centro danno potere a inizio turno quando hai <b>più pedine dell’avversario</b> nel settore. Il potere sblocca da solo le abilità <b>POT</b> dei personaggi."],
-["🔥","L’impeto","Spendi impeto con i pulsanti in basso per usare le abilità <b>IMP</b>, quando vuoi nel tuo turno e anche più volte."],
-["💎","Artefatti minori","Sulla seconda riga di ciascun lato ci sono artefatti: uno dà uno <b>scudo divino</b> a tutti i tuoi pezzi, l’altro <b>cura al massimo</b> tutta la squadra. Si raccolgono muovendo sopra un tuo pezzo: quando ne prendi uno, scompare anche quello speculare avversario."],
-["👆","Comandi","<b>Tocca</b> un pezzo: caselle verdi = mosse, rosse = attacchi. <b>Tieni premuto</b> un pezzo per vedere la sua scheda."]];
+const HW=[
+["🎯","Come si vince",'<div class="hl"><div><i>★</i><span>Porta un tuo pezzo sull’<b>artefatto avversario</b></span></div><div><i>⚔️</i><span><b>Elimina</b> tutti i pezzi avversari</span></div><div><i>⚡</i><span>Sii il primo a raggiungere <b>25 potere</b></span></div></div>'],
+["🔁","Il tuo turno",'<div class="hl"><div><i>1</i><span><b>Muovi</b> fino a <b>2 pezzi diversi</b> (solo 1 nel primo turno del Bianco)</span></div><div><i>2</i><span><b>Attacca</b>: ogni pezzo può farlo <b>una volta</b>, anche senza muoversi</span></div><div><i>3</i><span>Tocca sempre <b>Fine turno</b> per passare</span></div></div>'],
+["🗺️","Il campo",'<div class="hz"><svg viewBox="0 0 99 143" width="96" height="139" style="flex:none;border-radius:6px"><defs><pattern id="g" width="11" height="11" patternUnits="userSpaceOnUse"><path d="M11 0H0V11" fill="none" stroke="#0007" stroke-width=".6"/></pattern></defs><rect width="99" height="55" fill="#9a3a6a"/><rect y="55" width="99" height="33" fill="#3b3470"/><rect y="88" width="99" height="55" fill="#3a5fd0"/><rect x="0" y="55" width="33" height="33" fill="#5a45b8"/><rect x="33" y="55" width="33" height="33" fill="#7a55e8"/><rect x="66" y="55" width="33" height="33" fill="#5a45b8"/><rect width="99" height="143" fill="url(#g)"/><g fill="#fff" font-family="Georgia,serif" text-anchor="middle" font-weight="700"><text x="16" y="76" font-size="11">1</text><text x="49" y="76" font-size="11">2</text><text x="82" y="76" font-size="11">1</text><text x="49" y="36" font-size="8" opacity=".9">ATTACCO</text><text x="49" y="124" font-size="8" opacity=".9">DIFESA</text></g><g fill="#ffd77a" text-anchor="middle" font-size="11"><text x="49.5" y="20">★</text><text x="49.5" y="131">★</text></g></svg><div class="hl"><div><span><b style="color:#ff9ab8">Attacco</b> (5 righe): ogni tuo pezzo qui ti dà <b>1 impeto 🔥</b> a inizio turno</span></div><div><span><b style="color:#c9b8ff">Battaglia</b> (3 righe): i 3 quadrati del <b>potere ⚡</b></span></div><div><span><b style="color:#8fb4ff">Difesa</b> (5 righe): la tua base. La ★ è l’obiettivo</span></div></div></div>'],
+["⚡","Il potere",'<div style="text-align:center"><svg viewBox="0 0 120 40" width="150" height="50"><g font-family="Georgia,serif" font-weight="700" font-size="16" fill="#fff" text-anchor="middle"><rect x="1" y="2" width="36" height="36" rx="5" fill="#5a45b8" stroke="#c9a24a"/><rect x="42" y="2" width="36" height="36" rx="5" fill="#7a55e8" stroke="#ffd77a" stroke-width="2"/><rect x="83" y="2" width="36" height="36" rx="5" fill="#5a45b8" stroke="#c9a24a"/><text x="19" y="26">+1</text><text x="60" y="26">+2</text><text x="101" y="26">+1</text></g></svg></div><div class="hb2">A inizio turno prendi il potere di ogni quadrato viola in cui hai <b>più pezzi dell’avversario</b>.<br>Il potere <b>non si spende</b>: sblocca da solo le abilità ⚡ dei personaggi (tieni premuto un pezzo per vederle). A <b>25</b> vinci.</div>'],
+["🔥","L’impeto",'<div class="hl"><div><i>＋1</i><span>a inizio turno per <b>ogni tuo pezzo</b> nella zona d’attacco (massimo 20)</span></div><div><i>🔥</i><span>Si <b>spende</b> con i pulsanti in basso per usare le abilità IMP</span></div><div><i>∞</i><span>Quando vuoi nel tuo turno, <b>anche più volte</b>, finché ne hai</span></div></div>'],
+["💎","Da sapere",'<div class="hl"><div><i>🛡️</i><span><b>Artefatti minori</b> negli angoli: scudo divino o cura totale per tutta la squadra. Prendine uno e sparisce anche quello avversario</span></div><div><i>⏳</i><span>Dopo il <b>turno 30</b> tutti perdono 1 PV a turno</span></div><div><i>👆</i><span><b>Tocca</b> un pezzo per muoverlo, <b>tieni premuto</b> per la scheda</span></div></div>']];
 function hwx(){el("hw").style.display="none"}
 function howto(i){const e=el("hw"),z=HW[i],last=i==HW.length-1;e.style.display="flex";
- e.innerHTML='<div class="hc"><div class="hi">'+z[0]+'</div><h3>'+z[1]+'</h3><p>'+z[2]+'</p><div class="hd">'+HW.map((_,k)=>'<i class="'+(k==i?"on":"")+'"></i>').join("")+'</div><button class="mb" onclick="'+(last?"hwx()":"howto("+(i+1)+")")+'">'+(last?"Inizia":"Avanti")+'</button><a onclick="hwx()">Salta</a></div>'}
+ e.innerHTML='<div class="hc"><div class="hi">'+z[0]+'</div><h3>'+z[1]+'</h3><div class="hb">'+z[2]+'</div><div class="hd">'+HW.map((_,k)=>'<i class="'+(k==i?"on":"")+'"></i>').join("")+'</div>'
+ +(last?'<button class="mb" onclick="startTut()">Tutorial veloce</button><button class="mb sec" onclick="hwx()">Gioca</button>':'<button class="mb" onclick="howto('+(i+1)+')">Avanti</button>')
+ +'<a onclick="'+(i?'howto('+(i-1)+')':'hwx()')+'">'+(i?'Indietro':'Salta')+'</a></div>'}
+
+/* ===== Tutorial interattivo: 6 passaggi guidati con Achille contro un Cerbero ===== */
+let tut=null;
+function tutStep(){const a=has(1,"I"),c=has(2,"C");if(!a||tc>=2)return 6;if(turn!=1)return 5;if(!a.mv)return sel?1:0;if(c&&c.hp==16)return sel?3:2;if(imp[1]>=3)return 4;return 5}
+function tutOk(r,c){const s=tutStep();return s==0?(r==4&&c==1):s==1?(r==7&&c==1):s==2?(r==7&&c==1):s==3?(r==8&&c==1):false}
+function startTut(){["hw","dr","o"].forEach(i=>el(i).style.display="none");
+ team={1:["I"],2:["C"]};ai=0;deploy();
+ bd=Array.from({length:13},()=>Array(9).fill(null));
+ bd[4][1]={t:"I",p:1,hp:7,mh:7,r:4,c:1};bd[8][1]={t:"C",p:2,hp:16,mh:16,r:8,c:1};
+ imp={1:3,2:0};mvL=2;atL=5;tc=0;turn=1;sel=null;ab=null;over=false;MA=[];history=[];turnEvents=[];tut={};draw()}
+function endTut(){tut=null;el("tut").hidden=true;init()}
+function tutUI(){const e=el("tut");if(!tut){e.hidden=true;return}const s=tutStep();e.hidden=false;
+ const X=[["Seleziona","Tocca <b>Achille</b>, il pezzo blu evidenziato in oro."],
+ ["Muovi","Le caselle <b>verdi</b> sono le mosse possibili. Tocca quella evidenziata: Achille cammina fino a <b>3 caselle</b> in linea retta."],
+ ["Potere ⚡","Achille è ora nel <b>quadrato viola</b>: a inizio turno ti darà potere se lì hai più pezzi dell’avversario. Tocca di nuovo <b>Achille</b> per attaccare."],
+ ["Attacca","La casella <b>rossa</b> è un nemico a portata. Toccalo: l’attacco toglie PV pari all’<b>ATT</b> (bollino blu)."],
+ ["Impeto 🔥","Hai <b>3 impeto</b> 🔥 (nella tua striscia): se ne guadagna 1 per ogni pezzo in zona d’attacco. Premi il pulsante di Achille in basso: costa 3 e dà <b>+2 PV e +1 ATT</b>."],
+ ["Fine turno",turn==1?"Hai finito: tocca <b>Fine turno</b> per passare la mano. Il Nero salterà subito il suo turno.":"Il Nero passa il turno…"]];
+ e.innerHTML=s<6?'<div class="tt"><b>'+(s+1)+'/6 · '+X[s][0]+'</b><a onclick="endTut()">Salta</a></div><div>'+X[s][1]+'</div>'
+ :'<div class="tt"><b>Bravo! 🎉</b></div><div>Achille era nel quadrato viola e ora hai <b>⚡1 potere</b> (guarda la tua striscia). Il potere sblocca da solo le abilità e a <b>25</b> vinci. Ora conosci movimento, attacco, potere e impeto.</div><div class="tb"><button class="mb" onclick="endTut()">Gioca</button><button class="mb sec" onclick="startTut()">Rifai</button></div>'}
 init();initScene();howto(0);
 </script></body></html>
