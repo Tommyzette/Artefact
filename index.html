@@ -146,9 +146,56 @@ body::before{display:none}
 .tm h4{margin:0;color:#ffd77a;font-family:Georgia,serif;font-size:18px}
 .trow{display:flex;gap:8px}.tkb{width:44px;height:44px;border-radius:50%;border:2px solid #ffffff66;display:flex;align-items:center;justify-content:center;padding:0}
 .tkb svg{width:64%;height:64%}
+
+/* Artefatto — interfaccia fantasy da gioco da tavolo */
+:root{--gold:#e6bd67;--gold-hi:#ffe7a0;--ink:#21150d;--wood:#392313;--parchment:#e9d5a7}
+body{font-family:Georgia,"Times New Roman",serif;background:radial-gradient(ellipse at 50% 42%,#76502b 0%,#392615 52%,#160e09 100%);color:#f7e9c9}
+body::after{content:"";position:fixed;inset:7px;pointer-events:none;border:1px solid #d9b56a55;box-shadow:inset 0 0 45px #0008;z-index:10}
+#st{max-width:calc(100% - 20px);margin:7px auto 4px;padding:7px 16px;border:2px solid var(--gold);border-radius:13px;background:linear-gradient(180deg,#493019f2,#21150df5);color:#ffe8a5;text-shadow:0 1px 2px #000;box-shadow:0 3px 0 #160d07,0 0 16px #e5b85835;font:700 14px Georgia,serif}
+#et,.mb,#ok{border:2px solid #f4d58b!important;border-radius:12px!important;background:linear-gradient(180deg,#a45b27,#673414)!important;color:#fff0c8!important;text-shadow:0 1px 2px #2b1205;font:700 14px Georgia,serif;box-shadow:inset 0 1px #ffffff55,0 3px 0 #2a1509,0 5px 10px #0008;cursor:pointer}
+#et{padding:7px 17px;margin:0 0 4px}
+#et:disabled{filter:grayscale(.7);opacity:.5}
+#cv{isolation:isolate}
+#cv::before{content:"";position:absolute;inset:5px 7px 4px;border:2px solid #b88b43;border-radius:22px;box-shadow:inset 0 0 0 3px #28170e,inset 0 0 30px #0008,0 7px 18px #0009;pointer-events:none;z-index:0}
+#cv canvas{position:relative;z-index:1}
+.lgp{top:12px;width:clamp(57px,12vw,76px);padding:7px 5px;border:2px solid #c89c51;border-radius:13px;background:linear-gradient(145deg,#382414f5,#170e09f5);box-shadow:inset 0 0 0 2px #f4d88b22,0 4px 12px #000b;color:#f6e4bc;backdrop-filter:blur(5px)}
+#lg1{left:12px}#lg2{right:12px}
+.lgp.act{border-color:#ffe18a;box-shadow:inset 0 0 0 2px #ffe18a55,0 0 15px #ffdc6d99,0 4px 12px #000b}
+.lh{color:#ffdf8a;font-size:11px;text-shadow:0 1px 3px #000}
+.tk{border:1px solid #f8df9a88;box-shadow:0 1px 4px #000b,inset 0 1px #fff8}
+.bar2{border:1px solid #e5d2a477;background:#120b07;height:7px}
+#hist{position:absolute;z-index:4;right:clamp(78px,14vw,94px);top:12px;width:clamp(112px,25vw,174px);max-height:min(210px,35%);overflow:hidden;padding:0;border:2px solid #c99e52;border-radius:12px;background:linear-gradient(145deg,#392515f5,#170e09f5);color:#f7e9c9;font:10px/1.35 Georgia,serif;pointer-events:auto;box-shadow:inset 0 0 0 2px #f4d88b20,0 4px 14px #000b;transition:width .18s ease,max-height .18s ease}
+#histToggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 8px;border:0;background:linear-gradient(180deg,#79502a,#442814);color:#ffe4a0;font:700 10px Georgia,serif;letter-spacing:.55px;text-align:left;cursor:pointer}
+#histToggle:active{filter:brightness(1.2)}
+#histArrow{display:grid;place-items:center;width:17px;height:17px;flex:none;border:1px solid #f6d58b99;border-radius:50%;font-size:13px;line-height:1}
+#histbody{display:flex;flex-direction:column;gap:6px;padding:7px 8px;max-height:155px;overflow:auto}
+#histbody .he{border-top:1px solid #e5c47b55;padding-top:5px}
+#histbody .he strong{color:#ffdc83;font-size:10px}
+#histbody .he span{display:block;margin-top:2px;color:#f1dfbd;opacity:.95}
+#hist.collapsed{width:112px;max-height:34px}
+#hist.collapsed #histbody{display:none}
+#ab{padding:6px 8px calc(8px + env(safe-area-inset-bottom,0px));gap:8px}
+.abtn{min-height:38px;padding:4px 12px 4px 5px;border:2px solid #b98a42;border-radius:22px;background:linear-gradient(180deg,#49301c,#1d120b);color:#ffe3a0;box-shadow:inset 0 1px #ffffff30,0 3px 0 #160d07,0 4px 8px #0008;font:700 12px Georgia,serif}
+.abtn.on{border-color:#fff0a5;box-shadow:0 0 13px #ffd66b99,inset 0 0 8px #ffd66b44}
+.abtn:disabled{opacity:.38}
+#o,#dr{background:radial-gradient(ellipse at center,#634326f7,#170e09fa);color:#ffedc6}
+#o button{border:2px solid #f4d58b;background:linear-gradient(#a45b27,#673414);color:#fff0c8;box-shadow:0 3px 0 #2a1509}
+.dt,.tm h4{color:#ffe09a;text-shadow:0 2px 4px #000}
+.tm{border:2px solid #bd914a;background:linear-gradient(145deg,#4a301b,#1d120b);box-shadow:inset 0 0 0 2px #f4d88b22,0 4px 12px #0008}
+.dc{border:2px solid #b98a42;background:linear-gradient(145deg,#4a301b,#21150d);color:#f7e9c9}
+.dc.on{border-color:#ffe18a;background:#92703955}
+@media(max-width:520px){
+ #hist{right:76px;top:10px;width:112px;max-height:155px}
+ #hist.collapsed{width:102px;max-height:34px}
+ #histbody{max-height:112px}
+ #lg1{left:9px}#lg2{right:9px}
+ #st{font-size:12px;padding:6px 10px}
+ .abtn{font-size:11px;min-height:35px}
+}
+
 </style><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head><body>
 <div id="st"></div><button id="et" onclick="endT()">Fine turno</button>
-<div id="cv"><div class="lgp" id="lg1"></div><div class="lgp" id="lg2"></div><div id="hist"><b>CRONOLOGIA</b><div id="histbody">In attesa della partita</div></div></div>
+<div id="cv"><div class="lgp" id="lg1"></div><div class="lgp" id="lg2"></div><section id="hist" class="collapsed"><button id="histToggle" type="button" aria-expanded="false" onclick="toggleHistory()"><span>📜 CRONOLOGIA</span><span id="histArrow">＋</span></button><div id="histbody">In attesa della partita</div></section></div>
 <div id="ab"></div>
 <div id="hw"></div><div id="tip" onclick="this.style.display='none'"></div><div id="dr"></div><div id="o"><div id="ot"></div><button onclick="init()">Nuova partita</button></div>
 <script>
@@ -328,6 +375,7 @@ function legend(p){const e=el("lg"+p);if(!e)return;e.className="lgp"+(turn==p&&!
  e.innerHTML=h;e.querySelectorAll(".lr").forEach(r=>{const k=r.dataset.k;lpress(r,()=>tip(k,pcs(p).find(z=>z.t==k)))})}
 function abBar(){const b=el("ab");if(!b)return;if(over||!bd||(ai&&turn==2)){b.innerHTML="";return}
  b.innerHTML=pcs(turn).map(q=>{const a=AB[q.t];return'<button class="abtn'+(ab&&ab.t==q.t?' on':'')+'"'+(imp[turn]<a.c?' disabled':'')+' data-k="'+q.t+'"><span class="tk p'+turn+'">'+ico(q.t)+'</span>🔥'+a.c+'</button>'}).join("")}
+function toggleHistory(){const h=el("hist"),b=h.classList.toggle("collapsed");el("histToggle").setAttribute("aria-expanded",String(!b));el("histArrow").textContent=b?"＋":"−"}
 function renderHistory(){const e=el("histbody");if(!e)return;if(!history.length){e.textContent="Nessun turno concluso";return}e.innerHTML=history.slice().reverse().map(h=>"<div class=\"he\"><strong>"+h.player+" · T"+h.turn+"</strong><span>"+(h.events.length?h.events.slice(-4).join(" · "):"Nessuna azione registrata")+"</span></div>").join("")}
 function draw(){let s="⏳ "+(Math.floor(tc/2)+1)+" · Turno: "+NM[turn]+" · Mosse "+mvL+" · Attacchi "+atL+"/5";
  if(ab)s+=" · "+(ab.k=="e"?"scegli il bersaglio":"scegli "+ab.n+" caselle ("+ab.picks.length+")");
