@@ -334,9 +334,20 @@ body{overflow:hidden}
 
 #cv #tut{position:absolute;left:var(--ox,8px);width:var(--ow,calc(100% - 16px));z-index:6;max-height:46%;overflow:auto;box-sizing:border-box;box-shadow:0 8px 22px #000c;background:linear-gradient(160deg,#3d2816f5,#150c07f5)}
 #cv #tut.tb-top{top:calc(var(--ty,4px) + 2px)}#cv #tut.tb-bot{top:auto;bottom:6px}#cv #tut.tb-mid{top:34%}
+
+#cv #tut .tt{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#cv #tut .tr{display:flex;align-items:center;gap:10px;flex:none}
+#cv #tut .tmb{min-width:34px;height:28px;padding:0 8px;border-radius:9px;border:1.5px solid #ffd77a;background:#ffd77a22;color:#ffd77a;font:bold 13px Georgia,serif}
+#cv #tut.tmin{padding:5px 10px;max-height:none}
+
+#un{flex:none;height:30px;padding:0 10px;border-radius:15px;border:1.5px solid #ffd77a;background:linear-gradient(#7a4f22,#3a240f);color:#ffe08a;font:bold 13px Georgia,serif;white-space:nowrap}
+#snBtn{width:30px;height:30px;flex:none;border-radius:50%;border:1.5px solid #c9a24a;background:#2a1a0ee6;font-size:14px;padding:0}
+#hd #hx{display:flex;gap:5px;align-items:center}
+.hxe{padding:6px 2px;border-bottom:1px solid #ffffff1a}.hxe b{display:block;color:#ffd77a;font-size:12.5px;margin-bottom:2px}.hxe.now b{color:#9cffd0}.hxe div{font-size:12px;line-height:1.35}
+#hxBody{max-height:55vh;overflow:auto}
 </style></head><body>
 
-<div id="cv"><canvas id="bdc"></canvas><div id="top"><div id="hd"><div id="st"></div><div id="hx"><button id="hxBtn" type="button" aria-expanded="false" aria-label="Cronologia" onclick="toggleHistory()">📜</button><div id="hxBody" hidden>In attesa della partita</div></div></div><div class="lgs" id="lg2"></div></div><div id="tut" hidden></div><div id="bot"><div class="lgs" id="lg1"></div><div id="ab"><div id="abl"></div><button id="et" onclick="endT()">Fine turno</button></div><button id="cb" type="button" onclick="toggleCS()">📖 Schede personaggi ▴</button></div></div>
+<div id="cv"><canvas id="bdc"></canvas><div id="top"><div id="hd"><div id="st"></div><div id="hx"><button id="un" type="button" onclick="undoMv()" aria-label="Annulla l’ultima mossa">↶ Annulla</button><button id="snBtn" type="button" aria-label="Suoni" onclick="sndToggle()">🔊</button><button id="hxBtn" type="button" aria-expanded="false" aria-label="Cronologia" onclick="toggleHistory()">📜</button><div id="hxBody" hidden>In attesa della partita</div></div></div><div class="lgs" id="lg2"></div></div><div id="tut" hidden></div><div id="bot"><div class="lgs" id="lg1"></div><div id="ab"><div id="abl"></div><button id="et" onclick="endT()">Fine turno</button></div><button id="cb" type="button" onclick="toggleCS()">📖 Schede personaggi ▴</button></div></div>
 <div id="cs"></div><div id="abt" hidden></div><div id="tfin" hidden></div>
 <div id="hw"></div><div id="tip" onclick="this.style.display='none'"></div><div id="dr"></div><div id="gl"><div class="gt" id="glt"></div><textarea id="gx" readonly></textarea><div class="gb"><button onclick="glCopy()">Copia</button><button class="sec" onclick="el('gl').style.display='none'">Chiudi</button></div></div><div id="o"><div id="ot"></div><button onclick="init()">Nuova partita</button><button class="cp" onclick="glOpen(false)">📋 Copia questa partita</button></div>
 <script>
@@ -352,7 +363,7 @@ R:{n:"Aracne",f:"Bestia",hp:8,at:2,ra:[0,3],mv:[2,2],pw:10,pc:4,pd:"Veleno: il n
 C:{n:"Cerbero",f:"Bestia",hp:16,at:3,ra:[1,1],mv:[2,0],pw:6,pc:5,pd:"In zona difensiva respinge di 2 chi colpisce",ic:5,id:"+3 ATT per questo turno"},
 N:{n:"Pan",f:"Dio",hp:13,at:2,ra:[3,3],mv:[3,2],pw:10,pc:9,pd:"+2 ATT e +1 PV alle bestie alleate",ic:5,id:"Addormenta un avversario nel RA per 2 turni"},
 M:{n:"Minotauro",f:"Bestia",hp:12,at:4,ra:[1,1],mv:[3,1],pw:5,pc:4,pd:"In zona offensiva +1 ATT e +1 PV",ic:5,id:"+4 ATT per questo turno"}};
-const TEAMS={E:["U","I","H","A","S"],B:["P","R","C","N","M"]},TN={E:"Echi del mito",B:"Bestie furiose"},NM={1:"Bianco",2:"Nero"},COLS=[0,2,4,6,8];
+const TEAMS={E:["U","I","H","A","S"],B:["P","R","C","N","M"]},TN={E:"Echi del mito",B:"Bestie furiose"},NM={1:"Blu",2:"Rossa"},COLS=[0,2,4,6,8];
 const O4=[[1,0],[-1,0],[0,1],[0,-1]],D4=[[1,1],[1,-1],[-1,1],[-1,-1]];
 const ART={1:[1,4],2:[11,4]},SQ=[[0,2,1],[3,5,2],[6,8,1]],HERO=new Set(["U","I","H"]);
 const entry=p=>p==1?0:12,inb=(r,c)=>r>=0&&r<13&&c>=0&&c<9,zone=(p,r)=>{const x=p==1?r:12-r;return x<=4?"D":x<=7?"B":"O"};
@@ -387,9 +398,9 @@ function attack(q,x){q.at=1;atL--;const name=CH[q.t].n;
  eventLog(name+" attacca "+target+" ("+(n<0?"scudo":n+" danni")+")"+(n>0&&x.pv>0&&q.t=="R"&&x.hp>0?" · avvelenato":""));
  if(n>0&&x.hp>0&&q.t=="C"&&mana[q.p]>=potCost("C")&&zone(q.p,q.r)=="D")push(x,Math.sign(x.r-q.r),Math.sign(x.c-q.c),2)}
 function mvTo(q,r,c){const h=ART[q.p],o=q.p==1?2:1,a=ART[o];bd[q.r][q.c]=null;q.r=r;q.c=c;bd[r][c]=q;if(r==h[0]&&c==h[1])USED[q.p][q.t]=1;q.mv=1;mvL--;eventLog(CH[q.t].n+" si sposta");
- const m=MA.find(z=>!z.done&&z.p==q.p&&z.r==r&&z.c==c);if(m){m.done=1;const mirror=MA.find(z=>!z.done&&z.p!=q.p&&z.k==m.k);if(mirror)mirror.done=1;pcs(q.p).forEach(z=>{if(m.k=="s")z.sh=1;else z.hp=z.mh});if(q.t=="P"){q.ba=(q.ba||0)+2;q.hp++;q.mh++;eventLog("Pegaso: +2 ATT e +1 PV per sempre")}eventLog(CHIP(m.k)+" raccolto: "+(m.k=="s"?"scudo per la squadra":"cura completa")+"; artefatto speculare rimosso") }
+ const m=MA.find(z=>!z.done&&z.p==q.p&&z.r==r&&z.c==c);if(m){m.done=1;const mirror=MA.find(z=>!z.done&&z.p!=q.p&&z.k==m.k);if(mirror)mirror.done=1;pcs(q.p).forEach(z=>{if(m.k=="s")z.sh=1;else z.hp=z.mh});if(q.t=="P"){q.ba=(q.ba||0)+2;q.hp++;q.mh++;eventLog("Pegaso: +2 ATT e +1 PV per sempre")}eventLog("Benedizione: "+CHIP(m.k)+(m.k=="s"?" per tutta la squadra":", vita piena a tutta la squadra")) }
  syncBuffs();if(r==a[0]&&c==a[1]){win(q.p);return true}return false}
-const CHIP=k=>k=="s"?"Scudo":"Cura";
+const CHIP=k=>k=="s"?"Scudo divino":"Cura divina";
 const enOrth=q=>{const o=[];O4.forEach(([dr,dc])=>{for(let i=1;i<=3;i++){const a=q.r+dr*i,b=q.c+dc*i;if(!inb(a,b))break;const x=bd[a][b];if(x&&x.p!=q.p)o.push([a,b])}});return o};
 const blkTiles=(q,tl)=>tl.forEach(([r,c])=>blk.push({r,c,p:q.p==1?2:1,t:2}));
 const AB={U:{c:2,k:"e",list:q=>rawAt(q.r,q.c),run:(q,t)=>push(t,Math.sign(t.r-q.r),Math.sign(t.c-q.c),2)},
@@ -418,7 +429,7 @@ function usePass(){if(over||tut||(ai&&turn==aiP)||!sReady(turn))return;pbRun(tur
 function endTurn(){ab=null;sel=null;PRV=null;const f=turn,o=f==1?2:1;
  bd.forEach(rw=>rw.forEach(q=>{if(q&&q.p==f){q.mv=0;q.at=0;q.tb=0;if(q.fz>0)q.fz--;if(q.sl>0)q.sl--;if(q.pv>0)q.pv--}}));
  blk.forEach(e=>{if(e.p==f)e.t--});blk=blk.filter(e=>e.t>0);
- history.push({player:NM[f],turn:Math.floor(tc/2)+1,events:turnEvents.slice()});history=history.slice(-2);turnEvents=[];turn=o;tc++;mvL=2;atL=5;if(startTurn(o))return;
+ history.push({player:NM[f],turn:Math.floor(tc/2)+1,events:turnEvents.slice()});history=history.slice(-8);turnEvents=[];turn=o;tc++;mvL=2;atL=5;if(startTurn(o))return;
  draw();if(ai&&turn==aiP)setTimeout(aiStep,700)}
 function endT(){if(over||(ai&&turn==aiP)||!(mvL==0||!anyMove(turn)))return;if(tut&&TBUSY)return;endTurn();if(tut&&turn==2&&!over)tutBot()}
 function useAb(k){if(over||(ai&&turn==aiP))return;if(tut&&(TBUSY||turn!=1))return;const q=has(turn,k),a=AB[k];if(!q||imp[turn]<a.c)return;
@@ -428,8 +439,8 @@ function useAb(k){if(over||(ai&&turn==aiP))return;if(tut&&(TBUSY||turn!=1))retur
  else ab={t:k,q,c:a.c,k:"t",n:a.n,zone:a.zone,picks:[]};sel=null;draw()}
 function artAt(r,c){return ART[1][0]==r&&ART[1][1]==c?{main:1}:ART[2][0]==r&&ART[2][1]==c?{main:2}:MA.find(m=>!m.done&&m.r==r&&m.c==c)}
 function artTip(r,c){const a=artAt(r,c);if(!a)return;let h;
- if(a.main){const o=a.main,x=3-o;h='<h3>★ Artefatto del '+NM[o]+'</h3><div class="cc"><span class="fm" style="background:#ffcf4d">Obiettivo</span></div><p><b>Chi lo conquista vince la partita.</b> Un pezzo del '+NM[x]+' che entra in questa casella vince subito.</p><p class="cy">Per difenderlo, ogni pezzo del '+NM[o]+' può entrarci <b>una sola volta</b> in tutta la partita (anche se muore e rinasce).</p>'}
- else{const sh=a.k=="s";h='<h3>'+(sh?'🛡️ Scudo divino':'💚 Cura completa')+'</h3><div class="cc"><span class="fm" style="background:'+(sh?'#7ff0ff':'#6aff9a')+'">Artefatto minore</span></div><p>Lo può raccoglierlo solo il '+NM[a.p]+', muovendoci sopra un suo pezzo.</p><p><b>Cosa ottieni:</b> '+(sh?'tutta la squadra riceve uno scudo che annulla il prossimo colpo subito.':'tutti i tuoi pezzi tornano alla vita massima.')+'</p><p class="cy">Appena raccolto, l’artefatto gemello dell’avversario sparisce. <b>Pegaso</b> che lo raccoglie ottiene anche +2 attacco e +1 vita per sempre.</p>'}
+ if(a.main){const o=a.main,x=3-o;h='<h3>★ Artefatto della squadra '+NM[o]+'</h3><div class="cc"><span class="fm" style="background:#ffcf4d">Obiettivo</span></div><p><b>Chi lo conquista vince la partita.</b> Un pezzo della squadra '+NM[x]+' che entra in questa casella vince subito.</p><p class="cy">Per difenderlo, ogni pezzo della squadra '+NM[o]+' può entrarci <b>una sola volta</b> in tutta la partita (anche se muore e rinasce).</p>'}
+ else{const sh=a.k=="s";h='<h3>'+(sh?'🛡️ Scudo divino':'💚 Cura divina')+'</h3><div class="cc"><span class="fm" style="background:'+(sh?'#7ff0ff':'#6aff9a')+'">Benedizione degli dei</span></div><p>La può raccogliere solo la squadra '+NM[a.p]+', muovendoci sopra una sua pedina.</p><p><b>Cosa ottieni:</b> '+(sh?'tutta la squadra riceve uno scudo che annulla il prossimo colpo subito.':'tutti i tuoi pezzi tornano alla vita massima.')+'</p><p class="cy">Appena raccolta, la benedizione gemella dell’avversario svanisce. <b>Pegaso</b> che la raccoglie ottiene anche +2 attacco e +1 vita per sempre.</p>'}
  const e=el("tip");e.innerHTML='<section class="cw">'+h.replace('Lo può raccoglierlo','Può raccoglierlo')+'</section>';e.style.display="flex"}
 function tap(r,c,f){if(over||(ai&&turn==aiP&&!f))return;if(tut&&!tutOk(r,c))return;
  if(ab){if(!targets().some(t=>t[0]==r&&t[1]==c)){ab=null;draw();return}
@@ -467,7 +478,7 @@ function aiAbility(p){if(sReady(p)){const o=p==1?2:1,H=ART[p];if(pcs(o).some(e=>
   else if(k=="A"){if(!pcs(p).some(z=>HERO.has(z.t)&&z.hp<=z.mh-2))continue}
   else{const l=a.list(q);if(!l.length)continue;const t=l.map(z=>bd[z[0]][z[1]]).sort((x,y)=>atk(y)-atk(x))[0];imp[p]-=a.c;a.run(q,t);chkElim();return true}
   imp[p]-=a.c;a.run(q);return true}return false}
-function aiStep(f){if(lvl==1&&!f)return aiStep3();if(over||!ai||(turn!=aiP&&!f))return;const p=turn;
+function aiStep(f){if(lvl>=1&&!f)return aiStep3();if(over||!ai||(turn!=aiP&&!f))return;const p=turn;
  if(mvL>0){const m=aiMoveBest(p);if(m){sel={r:m.r,c:m.c};tap(m.a,m.b,1);if(!over)setTimeout(aiStep,550);return}}
  if(aiAbility(p)){draw();if(!over)setTimeout(aiStep,500);return}
  if(atL>0){const a=aiAtkBest(p);if(a){sel={r:a.r,c:a.c};tap(a.a,a.b,1);if(!over)setTimeout(aiStep,550);return}}
@@ -509,6 +520,9 @@ function raDraw(x,L,cs){const P=(a,b)=>{const z=cellXY(a,b);return[z[0]+cs/2,z[1
   x.strokeStyle=pass?"#ff3b30":"#3a0606";x.fillStyle=x.strokeStyle;x.lineWidth=pass?Math.max(2,cs*.09):Math.max(4,cs*.17);
   x.beginPath();x.moveTo(x1,y1);x.lineTo(hd?bx:tip[0],hd?by:tip[1]);x.stroke();
   if(hd){x.beginPath();x.moveTo(tip[0],tip[1]);x.lineTo(bx-vy*hw,by+vx*hw);x.lineTo(bx+vy*hw,by-vx*hw);x.closePath();if(!pass){x.lineWidth=Math.max(3,cs*.08);x.stroke()}x.fill()}}}
+function armBadge(x,cx,cy,r,n){x.beginPath();x.moveTo(cx,cy-r*1.05);x.quadraticCurveTo(cx+r*.95,cy-r*.85,cx+r*.92,cy-r*.55);x.quadraticCurveTo(cx+r*.9,cy+r*.55,cx,cy+r*1.1);x.quadraticCurveTo(cx-r*.9,cy+r*.55,cx-r*.92,cy-r*.55);x.quadraticCurveTo(cx-r*.95,cy-r*.85,cx,cy-r*1.05);x.closePath();
+ const g=x.createLinearGradient(cx,cy-r,cx,cy+r);g.addColorStop(0,"#eef2f6");g.addColorStop(1,"#7d8a99");x.fillStyle=g;x.fill();x.lineWidth=Math.max(1.2,r*.18);x.strokeStyle="#2b3440";x.stroke();
+ x.fillStyle="#1d2733";x.font="bold "+Math.round(r*1.25)+"px Georgia,serif";x.textAlign="center";x.textBaseline="middle";x.fillText(n,cx,cy+r*.08)}
 function render(t){const x=CTX;if(!x||!LAY.W)return;x.setTransform(DPR,0,0,DPR,0,0);x.clearRect(0,0,LAY.W,LAY.H);
  x.fillStyle="#1a1410";x.fillRect(0,0,LAY.W,LAY.H);
  if(ARN&&ARN.naturalWidth){const k=Math.max(LAY.W/AW0,LAY.H/AH0);x.globalAlpha=.4;x.drawImage(ARN,(LAY.W-AW0*k)/2,(LAY.H-AH0*k)/2,AW0*k,AH0*k);x.globalAlpha=1;x.drawImage(ARN,LAY.ix,LAY.iy,AW0*LAY.s,AH0*LAY.s)}
@@ -539,15 +553,20 @@ function render(t){const x=CTX;if(!x||!LAY.W)return;x.setTransform(DPR,0,0,DPR,0
  [1,2].forEach(p=>{const[px,py]=cellXY(ART[p][0],ART[p][1]);x.strokeStyle="#ffd23a";x.lineWidth=Math.max(2,cs*.09);x.strokeRect(px+1,py+1,cs-2,cs-2);gem(x,px+cs/2,py+cs/2,cs*.36,"#ffcf4d","#b8860b",t,p)});
  MA.forEach((m,i)=>{if(m.done)return;const[px,py]=cellXY(m.r,m.c);gem(x,px+cs/2,py+cs/2+Math.sin(t/500+i)*cs*.03,cs*.27,m.k=="s"?"#7ff0ff":"#6aff9a",m.p==1?"#1a3a90":"#901a2a",t,i)});
  if(RS.ra&&RS.ra.length){x.globalAlpha=.92;raDraw(x,RS.ra,cs);x.globalAlpha=1}
- for(let r=0;r<13;r++)for(let c=0;c<9;c++){const q=bd[r][c];if(!q)continue;const[px,py]=cellXY(r,c);let cx=px+cs/2,cy=py+cs/2,R=cs*.43;
+ for(let r=0;r<13;r++)for(let c=0;c<9;c++){const q=bd[r][c];if(!q)continue;const[px,py]=cellXY(r,c);let cx=px+cs/2,cy=py+cs/2,R=cs*.43;const NW=NOW(),po=pieceOff(q,cs,NW);if(po){cx+=po.dx;cy+=po.dy;R*=po.sc}
+  for(const f of FX)if(f.k=="lunge"&&f.q===q){const kk=(NW-f.t0)/f.d;if(kk<1){const[tx,ty]=cellXY(f.tr,f.tc2),dx=tx-px,dy=ty-py,n=Math.hypot(dx,dy)||1,m=Math.sin(Math.PI*kk)*cs*.22;cx+=dx/n*m;cy+=dy/n*m}}
   const isSel=sel&&sel.r==r&&sel.c==c;if(isSel)cy-=Math.abs(Math.sin(t/160))*cs*.07;
-  x.globalAlpha=.35;x.fillStyle="#000";x.beginPath();x.ellipse(px+cs/2,py+cs*.86,R*.85,R*.3,0,0,7);x.fill();x.globalAlpha=1;
-  const rc=q.t=="S"&&sReady(q.p)?"#ffd23a":q.sh?"#7ff0ff":q.sl>0?"#a070ff":q.fz>0?"#ff5050":q.p==1?"#4aa8ff":"#ff4b4b";
+  x.globalAlpha=.35;x.fillStyle="#000";x.beginPath();x.ellipse(cx,cy+cs*.36,R*.85,R*.3,0,0,7);x.fill();x.globalAlpha=1;
+  const rc=q.t=="S"&&sReady(q.p)?"#ffd23a":q.sh?"#ffc928":q.sl>0?"#a070ff":q.fz>0?"#ff5050":q.p==1?"#4aa8ff":"#ff4b4b";
   const g=x.createRadialGradient(cx-R*.3,cy-R*.3,R*.1,cx,cy,R);g.addColorStop(0,q.p==1?"#e9f4ff":"#ffb3c2");g.addColorStop(1,q.p==1?"#2a74d6":"#8a1c4c");
   x.beginPath();x.arc(cx,cy,R,0,7);x.fillStyle=g;x.fill();
   const im=tokImg(q.t);if(im.complete&&im.naturalWidth){x.save();x.beginPath();x.arc(cx,cy,R*.86,0,7);x.clip();x.drawImage(im,cx-R*.86,cy-R*.86,R*1.72,R*1.72);x.restore()}
   x.lineWidth=Math.max(2,R*.2);x.strokeStyle=rc;x.beginPath();x.arc(cx,cy,R*.93,0,7);x.stroke();x.lineWidth=Math.max(1,R*.06);x.strokeStyle="#d9a93e";x.beginPath();x.arc(cx,cy,R*.8,0,7);x.stroke();
-  const br=cs*.25;badge(x,px+br*.9,py+cs-br*.7,br,"#1e6fd9",atk(q));badge(x,px+cs-br*.9,py+cs-br*.7,br,"#c0392b",q.hp)}
+  if(q.sh){x.globalAlpha=.55+.35*Math.sin(t/260);x.lineWidth=Math.max(2,R*.12);x.strokeStyle="#fff1a8";x.beginPath();x.arc(cx,cy,R*1.07,0,7);x.stroke();x.globalAlpha=1}
+  const fl=FLASH.get(q);if(fl!==undefined){const kk=(NW-fl)/300;if(kk<1){x.globalAlpha=.55*(1-kk);x.fillStyle="#ff2a1a";x.beginPath();x.arc(cx,cy,R,0,7);x.fill();x.globalAlpha=1}else FLASH.delete(q)}
+  const ox=cx-cs/2,oy=cy-cs/2,br=cs*.25;badge(x,ox+br*.9,oy+cs-br*.7,br,"#1e6fd9",atk(q));badge(x,ox+cs-br*.9,oy+cs-br*.7,br,"#c0392b",q.hp);
+  const ar=armor(q);if(ar>0)armBadge(x,ox+cs-br*.85,oy+br*.95,br*.95,ar)}
+ drawFX(x,cs,NOW());
  if(tut)tutPtr(x,t,cs)}
 let PRV=null,LT=null;
 function abTip(k,b){const t=el("abt");if(!t)return;let h;
@@ -597,10 +616,17 @@ function legend(p){const e=el("lg"+(flip()?3-p:p));if(!e)return;e.className="lgs
 function abBar(){const b=el("abl");if(!b)return;if(over||!bd||(ai&&turn==aiP)){b.innerHTML="";return}
  b.innerHTML=pcs(turn).map(q=>{const a=AB[q.t];return'<button class="abtn'+(ab&&ab.t==q.t?' on':'')+(tut&&TS[tut.i].ab==q.t?' tp':'')+(imp[turn]<a.c?' off':'')+'"'+(imp[turn]<a.c?' aria-disabled="true"':'')+' data-k="'+q.t+'"><span class="tk p'+turn+'">'+ico(q.t)+'</span>🔥'+a.c+'</button>'}).join("")+(sReady(turn)&&!tut?'<button class="abtn pp" data-k="PS">⚡ Poseidone è pronto: sbarra la riga davanti alla difesa avversaria (1 volta)</button>':'')}
 function toggleHistory(){const b=el("hxBody"),o=b.hidden;b.hidden=!o;el("hxBtn").setAttribute("aria-expanded",String(o))}
-function renderHistory(){const e=el("hxBody");if(!e)return;if(!history.length){e.textContent="Nessun turno concluso";return}e.innerHTML=history.slice().reverse().map(h=>"<div class=\"he\"><strong>"+h.player+" · T"+h.turn+"</strong><span>"+(h.events.length?h.events.slice(-4).join(" · "):"Nessuna azione registrata")+"</span></div>").join("")}
+function sumEv(ev){const mv=[],at=[],ot=[],dd=[];let gn="";
+ for(const t of ev){let m;if(m=t.match(/^(.+) si sposta$/))mv.push(m[1]);else if(m=t.match(/^(.+) attacca (.+) \((scudo|(\d+) danni)\)(.*)$/))at.push(m[1]+" → "+m[2]+" "+(m[3]=="scudo"?"(parato dallo scudo)":"−"+m[4])+(m[5]?" ☠️":""));
+  else if(m=t.match(/^(.+) colpisce l’area \((\d+) nemici\)$/))at.push(m[1]+" → area ("+m[2]+")");else if(m=t.match(/^(.+) eliminato$/))dd.push(m[1]);else if(/^Guadagna/.test(t))gn=t.replace("Guadagna ","");else ot.push(t)}
+ const L=[];if(gn)L.push("🌅 Inizio turno: "+gn);if(mv.length)L.push("👣 Muove: "+mv.join(", "));if(at.length)L.push("⚔️ "+at.join(" · "));ot.forEach(t=>L.push("✨ "+t));if(dd.length)L.push("💀 Eliminati: "+dd.join(", "));
+ return L.length?L.map(x=>"<div>"+x+"</div>").join(""):"<div>Nessuna azione</div>"}
+function renderHistory(){const e=el("hxBody");if(!e)return;if(!bd||!NM){e.textContent="";return}
+ let h='<div class="hxe now"><b>▶ Ora · Turno '+(Math.floor(tc/2)+1)+' · Squadra '+(turn==1?"Blu":"Rossa")+'</b>'+(turnEvents.length?sumEv(turnEvents):"<div>Nessuna azione per ora</div>")+'</div>';
+ h+=history.slice().reverse().map(x=>'<div class="hxe"><b>Turno '+x.turn+' · Squadra '+x.player+'</b>'+sumEv(x.events)+'</div>').join("");e.innerHTML=h}
 function draw(){let s="⏳ "+(Math.floor(tc/2)+1)+" · "+NM[turn]+" · Mosse "+mvL+" · Att. "+atL+"/5";
  if(ab)s+=" · "+(ab.k=="e"?"scegli il bersaglio":"scegli "+ab.n+" caselle ("+ab.picks.length+")");
- el("st").textContent=s;renderHistory();el("et").disabled=over||!!(ai&&turn==aiP)||!(mvL==0||!anyMove(turn))||!!(tut&&TBUSY);el("et").classList.toggle("tp",!!(tut&&TS[tut.i].et&&turn==1&&!TBUSY));tutUI();legend(1);legend(2);abBar();
+ el("st").textContent=s;renderHistory();{const u=el("un");if(u){const ok=typeof UNDOS!="undefined"&&UNDOS.length&&!over&&!(ai&&turn==aiP)&&UNDOS[UNDOS.length-1].tc===tc;u.style.display=ok?"":"none"}const sb=el("snBtn");if(sb&&typeof SND!="undefined")sb.textContent=SND.on?"🔊":"🔇"}el("et").disabled=over||!!(ai&&turn==aiP)||!(mvL==0||!anyMove(turn))||!!(tut&&TBUSY);el("et").classList.toggle("tp",!!(tut&&TS[tut.i].et&&turn==1&&!TBUSY));tutUI();legend(1);legend(2);abBar();
  const tg=targets().filter(t=>!tut||tutOk(t[0],t[1]));RS.tset=new Set(tg.map(t=>t[0]+","+t[1]));
  RS.ra=[];RS.pm=null;if(PRV&&(!PRV.q||PRV.q.hp<=0||bd[PRV.q.r][PRV.q.c]!==PRV.q))PRV=null;
  if(PRV){const q=PRV.q;RS.ra=raGeo(q);RS.pm=new Set(rawMv(q.r,q.c).map(z=>z[0]+","+z[1]))}else if(sel&&!ab){const q=bd[sel.r]&&bd[sel.r][sel.c];if(q)RS.ra=raGeo(q)}
@@ -611,17 +637,17 @@ function card(t,q,pp){const d=CH[t];let h='<strong>'+d.n+'</strong> <em class="f
  const P=q?q.p:pp;if(P){const dd=q?null:DEAD.find(d=>d.p==P&&d.t==t);if(dd)h+='<br><u>⏳ rinasce tra '+remTurns(dd)+' turni</u>';if(USED[P][t])h+='<br><u>★ ha già difeso la tua ★: non può rientrarci</u>'}
  return h}
 function lpress(e,fn){let tm;e.addEventListener("pointerdown",()=>{lp=0;tm=setTimeout(()=>{lp=1;fn()},450)});["pointerup","pointerleave","pointercancel"].forEach(ev=>e.addEventListener(ev,()=>clearTimeout(tm)));e.addEventListener("contextmenu",x=>x.preventDefault())}
-function win(p,w){over=true;if(tut){draw();return}draw();el("ot").textContent=(p?"Vince il "+NM[p]+"!":"Pareggio!")+(w?" ("+w+")":"");el("o").style.display="flex"}
+function win(p,w){over=true;if(tut){draw();return}draw();el("ot").textContent=(p?"Vince la squadra "+NM[p]+"!":"Pareggio!")+(w?" ("+w+")":"");el("o").style.display="flex"}
 function setAi(v){ai=v;lvl=null;AW={1:DW,2:DW};draft()}
 function setLvl(v){lvl=v;aiP=Math.random()<.5?1:2;AW={1:DW,2:DW};draft()}
 function draft(){const d=el("dr");d.style.display="flex";
  if(ai===null){d.innerHTML='<div class="dt">Come vuoi giocare?</div><button class="mb" onclick="setAi(0)">2 giocatori</button><button class="mb" onclick="setAi(1)">Contro il computer</button><button class="mb sec" onclick="startTut()">🎓 Tutorial</button><button class="mb sec" onclick="openCS(\'m\',\'M\')">📖 Personaggi</button>';return}
- if(ai===1&&lvl===null){d.innerHTML='<div class="dt">Difficoltà del computer</div><button class="mb" onclick="setLvl(0)">Normale</button><button class="mb" onclick="setLvl(1)">Esperto (addestrato)</button>';return}
- d.innerHTML='<div class="dt">'+(ai?'Giochi con i '+(aiP==2?'Bianchi (muovi per primo)':'Neri (il computer muove per primo)')+': scegli la squadra':'Bianco: scegli la squadra')+'</div><div class="lg">Tocca un personaggio per vedere la sua scheda. L’altra squadra va '+(ai?'al computer':'al Nero')+'.</div>'+Object.keys(TEAMS).map(k=>'<div class="tm"><h4>'+TN[k]+'</h4><div class="lg">'+FT[k]+'</div><div class="trow">'+TEAMS[k].map(t=>'<button class="tkb p1" onclick="tip(\''+t+'\')">'+ico(t)+'</button>').join("")+'</div><button class="mb" onclick="pickTeam(\''+k+'\')">Scegli</button></div>').join("")}
+ if(ai===1&&lvl===null){d.innerHTML='<div class="dt">Difficoltà del computer</div><button class="mb" onclick="setLvl(0)">🙂 Facile</button><button class="mb" onclick="setLvl(1)">😐 Medio</button><button class="mb" onclick="setLvl(2)">😈 Difficile</button>';return}
+ d.innerHTML='<div class="dt">'+(ai?'Giochi con la squadra '+(aiP==2?'Blu (muovi per primo)':'Rossa (il computer muove per primo)')+': scegli i personaggi':'Squadra Blu: scegli i personaggi')+'</div><div class="lg">Tocca un personaggio per vedere la sua scheda. L’altra squadra va '+(ai?'al computer':'alla squadra Rossa')+'.</div>'+Object.keys(TEAMS).map(k=>'<div class="tm"><h4>'+TN[k]+'</h4><div class="lg">'+FT[k]+'</div><div class="trow">'+TEAMS[k].map(t=>'<button class="tkb p1" onclick="tip(\''+t+'\')">'+ico(t)+'</button>').join("")+'</div><button class="mb" onclick="pickTeam(\''+k+'\')">Scegli</button></div>').join("")}
 function pickTeam(k){const o=k=="E"?"B":"E",hp=ai?3-aiP:1;team={};team[hp]=TEAMS[k].slice();team[3-hp]=TEAMS[o].slice();NWs={};NWs[hp]=NWT[k];NWs[3-hp]=NWT[o];el("dr").style.display="none";deploy();fit();draw();if(ai&&aiP==1)setTimeout(aiStep,900)}
 const HW=[
 ["🎯","Come si vince",'<div class="hl"><div><i>★</i><span>Porta un tuo pezzo sull’<b>artefatto avversario</b></span></div><div><i>☠️</i><span>I pezzi eliminati <b>rinascono dopo 10 turni</b> nella casella di partenza</span></div><div><i>⚡</i><span>Sii il primo a raggiungere <b>25 potere</b></span></div></div>'],
-["🔁","Il tuo turno",'<div class="hl"><div><i>1</i><span><b>Muovi</b> fino a <b>2 pezzi diversi</b> (solo 1 nel primo turno del Bianco)</span></div><div><i>2</i><span><b>Attacca</b>: ogni pezzo può farlo <b>una volta</b>, anche senza muoversi</span></div><div><i>3</i><span>Tocca sempre <b>Fine turno</b> per passare</span></div></div>'],
+["🔁","Il tuo turno",'<div class="hl"><div><i>1</i><span><b>Muovi</b> fino a <b>2 pezzi diversi</b> (solo 1 nel primo turno della squadra Blu)</span></div><div><i>2</i><span><b>Attacca</b>: ogni pezzo può farlo <b>una volta</b>, anche senza muoversi</span></div><div><i>3</i><span>Tocca sempre <b>Fine turno</b> per passare</span></div></div>'],
 ["🗺️","Il campo",'<div class="hz"><svg viewBox="0 0 99 143" width="96" height="139" style="flex:none;border-radius:6px"><defs><pattern id="g" width="11" height="11" patternUnits="userSpaceOnUse"><path d="M11 0H0V11" fill="none" stroke="#0007" stroke-width=".6"/></pattern></defs><rect width="99" height="55" fill="#9a3a6a"/><rect y="55" width="99" height="33" fill="#3b3470"/><rect y="88" width="99" height="55" fill="#3a5fd0"/><rect x="0" y="55" width="33" height="33" fill="#5a45b8"/><rect x="33" y="55" width="33" height="33" fill="#7a55e8"/><rect x="66" y="55" width="33" height="33" fill="#5a45b8"/><rect width="99" height="143" fill="url(#g)"/><g fill="#fff" font-family="Georgia,serif" text-anchor="middle" font-weight="700"><text x="16" y="76" font-size="11">1</text><text x="49" y="76" font-size="11">2</text><text x="82" y="76" font-size="11">1</text><text x="49" y="36" font-size="8" opacity=".9">ATTACCO</text><text x="49" y="124" font-size="8" opacity=".9">DIFESA</text></g><g fill="#ffd77a" text-anchor="middle" font-size="11"><text x="49.5" y="20">★</text><text x="49.5" y="131">★</text></g></svg><div class="hl"><div><span><b style="color:#ff9ab8">Attacco</b> (5 righe): ogni tuo pezzo qui ti dà <b>1 impeto 🔥</b> a inizio turno</span></div><div><span><b style="color:#c9b8ff">Battaglia</b> (3 righe): i 3 quadrati del <b>potere ⚡</b></span></div><div><span><b style="color:#8fb4ff">Difesa</b> (5 righe): la tua base. La ★ è l’obiettivo</span></div></div></div>'],
 ["⚡","Il potere",'<div style="text-align:center"><svg viewBox="0 0 120 40" width="150" height="50"><g font-family="Georgia,serif" font-weight="700" font-size="16" fill="#fff" text-anchor="middle"><rect x="1" y="2" width="36" height="36" rx="5" fill="#5a45b8" stroke="#c9a24a"/><rect x="42" y="2" width="36" height="36" rx="5" fill="#7a55e8" stroke="#ffd77a" stroke-width="2"/><rect x="83" y="2" width="36" height="36" rx="5" fill="#5a45b8" stroke="#c9a24a"/><text x="19" y="26">+1</text><text x="60" y="26">+2</text><text x="101" y="26">+1</text></g></svg></div><div class="hb2">A inizio turno prendi il potere di ogni quadrato viola in cui hai <b>più pezzi dell’avversario</b>.<br>Il potere <b>non si spende</b>: sblocca da solo le abilità ⚡ dei personaggi (tieni premuto un pezzo per vederle). A <b>25</b> vinci.</div>'],
 ["🔥","L’impeto",'<div class="hl"><div><i>＋1</i><span>a inizio turno per <b>ogni tuo pezzo</b> nella zona d’attacco (massimo 20)</span></div><div><i>🔥</i><span>Si <b>spende</b> con i pulsanti in basso per usare le abilità IMP</span></div><div><i>∞</i><span>Quando vuoi nel tuo turno, <b>anche più volte</b>, finché ne hai</span></div></div>'],
@@ -636,16 +662,16 @@ function howto(i){const e=el("hw"),z=HW[i],last=i==HW.length-1;e.style.display="
 let tut=null,TBUSY=0;
 const TSQ=[[6,1],[6,4],[6,7]];
 const TS=[
-{h:"Muovi una pedina",pos:"top",x:'Le tue pedine sono quelle con l’anello <b style="color:#7fb4ff">blu</b>, in basso.<br>👉 <b>Tocca una pedina</b>: le caselle <b style="color:#5be39a">verdi</b> sono dove può andare, le <b style="color:#ff6b5e">frecce rosse</b> mostrano fin dove può <b>colpire</b> da lì. Poi tocca una casella verde per spostarla.',done:()=>tc>0||pcs(1).some(q=>q.mv)},
-{h:"Fine turno",pos:"top",et:1,x:'Nel primo turno il Bianco muove <b>1 sola pedina</b>. Dal turno dopo puoi muovere <b>2 pedine diverse</b> e fare fino a <b>5 attacchi</b> (ogni pedina attacca una volta: la tocchi e poi tocchi il nemico nella casella rossa).<br>👉 Tocca <b>Fine turno</b>: il Nero farà la sua mossa.',done:()=>tc>=2&&turn==1&&!TBUSY},
-{h:"L’obiettivo",pos:"bot",nx:1,pt:()=>[ART[2]],x:'Questa è la <b>stella del Nero</b>: porta una tua pedina lì sopra e <b>vinci la partita</b>.<br>La tua stella è in basso: difendila. Ogni pedina può entrare nella <b>propria</b> stella <b>una volta sola</b>: se ne esce, non può più tornarci.'},
+{h:"Muovi una pedina",pos:"top",x:'Tu sei la <b style="color:#7fb4ff">squadra Blu</b>: le tue pedine hanno l’anello blu e partono in basso.<br>👉 <b>Tocca una pedina</b>: le caselle <b style="color:#5be39a">verdi</b> sono dove può andare, le <b style="color:#ff6b5e">frecce rosse</b> mostrano fin dove può <b>colpire</b> da lì. Poi tocca una casella verde per spostarla.',done:()=>tc>0||pcs(1).some(q=>q.mv)},
+{h:"Fine turno",pos:"top",et:1,x:'Nel primo turno la squadra Blu muove <b>1 sola pedina</b>. Dal turno dopo puoi muovere <b>2 pedine diverse</b> e fare fino a <b>5 attacchi</b> (ogni pedina attacca una volta: la tocchi e poi tocchi il nemico nella casella rossa).<br><b>Fine turno</b> si accende quando hai usato tutte le mosse del turno.<br>👉 Toccalo: la squadra Rossa farà la sua mossa.',done:()=>tc>=2&&turn==1&&!TBUSY},
+{h:"L’obiettivo",pos:"bot",nx:1,pt:()=>[ART[2]],x:'Questa è la <b>stella della squadra Rossa</b>: porta una tua pedina lì sopra e <b>vinci la partita</b>.<br>La tua stella è in basso: difendila. Ogni pedina può entrare nella <b>propria</b> stella <b>una volta sola</b>: se ne esce, non può più tornarci.'},
 {h:"I quadrati del potere",pos:"top",nx:1,pt:()=>TSQ,x:'All’inizio di ogni tuo turno, per ogni quadrato viola in cui hai <b>più pedine dell’avversario</b> guadagni ⚡ potere: <b>+1</b>, <b>+2</b> al centro, <b>+1</b>.<br>Il potere non si spende: <b>sblocca da solo le passive</b> dei personaggi e se arrivi a <b>25</b> vinci.'},
-{h:"Gli artefatti minori",pos:"mid",nx:1,pt:()=>MA.filter(m=>!m.done).map(m=>[m.r,m.c]),x:'Le gemme piccole sono gli <b>artefatti minori</b>: i tuoi stanno nella metà del Nero, quelli del Nero nella tua. Passandoci sopra li prendi:<br><b style="color:#7ff0ff">azzurra</b> = <b>scudo</b> a tutta la squadra (para il prossimo colpo), <b style="color:#6aff9a">verde</b> = <b>cura</b> completa a tutta la squadra.<br>Quando ne prendi uno, sparisce anche quello uguale dell’avversario.'},
-{h:"Le tre zone",pos:"top",nx:1,zn:1,x:'Il campo ha 3 zone: la tua <b>difesa</b> (le 5 righe in basso), la <b>battaglia</b> al centro e la zona d’<b>attacco</b> (le 5 righe del Nero).<br>Ogni tua pedina in zona d’attacco all’inizio del turno ti dà <b>🔥1 impeto</b> (massimo 20). L’impeto serve ad attivare le <b>abilità</b>.'},
+{h:"Le benedizioni degli dei",pos:"mid",nx:1,pt:()=>MA.filter(m=>!m.done).map(m=>[m.r,m.c]),x:'Le gemme piccole sono le <b>benedizioni degli dei</b>: le tue stanno nella metà dei Rossi, quelle dei Rossi nella tua. Passandoci sopra le raccogli:<br><b style="color:#7ff0ff">azzurra</b> = <b>scudo divino</b> a tutta la squadra (para il prossimo colpo, contorno dorato), <b style="color:#6aff9a">verde</b> = <b>cura divina</b>: vita piena a tutta la squadra.<br>Quando ne raccogli una, svanisce anche quella uguale dell’avversario.'},
+{h:"Le tre zone",pos:"top",nx:1,zn:1,x:'Il campo ha 3 zone: la tua <b>difesa</b> (le 5 righe in basso), la <b>battaglia</b> al centro e la zona d’<b>attacco</b> (le 5 righe dei Rossi).<br>Ogni tua pedina in zona d’attacco all’inizio del turno ti dà <b>🔥1 impeto</b> (massimo 20). L’impeto serve ad attivare le <b>abilità</b>.'},
 {h:"Le schede",pos:"top",x:'💡 <b>Tieni premuta</b> una pedina, tua o avversaria: si apre la sua <b>scheda</b> con vita, attacco, movimenti, raggio d’attacco e poteri.<br>👉 Provalo ora.',done:()=>tut.card},
-{h:"Studia l’avversario",pos:"bot",x:'👉 Fai <b>doppio tocco</b> su una pedina del Nero (anello rosso): in <b style="color:#ffb05a">arancione</b> vedi dove può muoversi e con le frecce dove può colpire. Così capisci se una tua pedina è in pericolo.',done:()=>!!PRV},
+{h:"Studia l’avversario",pos:"bot",x:'👉 Fai <b>doppio tocco</b> su una pedina della squadra Rossa: in <b style="color:#ffb05a">arancione</b> vedi dove può muoversi e con le frecce dove può colpire. Così capisci se una tua pedina è in pericolo.',done:()=>!!PRV},
 {h:"Abilità con l’impeto",pos:"top",ab:"I",on:()=>{imp[1]=Math.max(imp[1],3)},x:'I pulsanti in basso sono le <b>abilità</b> delle tue pedine, con il costo in 🔥. Quando hai abbastanza impeto il pulsante si accende. 💡 <b>Tieni premuto</b> un pulsante per leggere cosa fa.<br>Ti abbiamo dato un po’ di impeto: 👉 tocca il pulsante di <b>Achille</b> (o un’altra abilità accesa) nel tuo turno.',done:()=>tut.ab},
-{h:"Conquista la stella!",pos:"bot",pt:()=>[ART[2]],x:'Ora sai tutto. Il Nero non sta difendendo la sua stella: 👉 <b>porta una tua pedina sulla stella del Nero</b> per chiudere il tutorial. Usa le 2 mosse per turno e attacca chi ti blocca la strada.',done:()=>over},
+{h:"Conquista la stella!",pos:"top",pt:()=>[ART[2]],x:'La squadra Rossa non difende la sua stella: 👉 <b>portaci sopra una tua pedina</b> per finire. Muovi, attacca e tocca <b>Fine turno</b> quanto serve. Tocca ▾ per ridurre questo riquadro.',done:()=>over},
 {h:"Hai vinto! 🎉",end:1,x:'Ricapitolando:<br>• vinci con la ★ avversaria o con <b>25 potere</b><br>• ogni turno: <b>2 mosse</b> con pedine diverse e fino a <b>5 attacchi</b><br>• i quadrati viola danno potere, la zona d’attacco dà impeto<br>• le pedine eliminate <b>rinascono dopo 10 turni</b> nella casella di partenza<br>• tieni premuto per le schede, doppio tocco sugli avversari, 📜 per la cronologia<br>Le partite vere sono <b>5 contro 5</b>: ogni personaggio ha poteri diversi.'}];
 function tutStep(){return tut?tut.i:-1}
 function tutOk(r,c){return!tut||(turn==1&&!TBUSY)}
@@ -666,8 +692,10 @@ function tutUI(){const e=el("tut");if(!tut){e.hidden=true;return}
  let g=0;while(g++<3&&!TS[tut.i].nx&&TS[tut.i].done&&TS[tut.i].done()){tut.i++;const s=TS[tut.i];if(s.on)s.on()}
  const s=TS[tut.i],n=TS.length-1,F=el("tfin");
  if(s.end){e.hidden=true;F.hidden=false;F.innerHTML='<div class="bx"><h3>'+s.h+'</h3><div>'+s.x+'</div><div class="tb"><button class="mb" onclick="endTut()">Gioca una partita</button><button class="mb sec" onclick="startTut()">Rifai</button></div></div>';return}
- F.hidden=true;e.hidden=false;e.className="tb-"+s.pos;
- e.innerHTML='<div class="tt"><b>'+(tut.i+1)+'/'+n+' · '+s.h+'</b><a onclick="endTut()">Salta tutorial</a></div><div>'+(TBUSY?'Il Nero sta giocando…':s.x)+'</div>'+(s.nx&&!TBUSY?'<div class="tb"><button class="mb" onclick="tutNext()">Avanti ›</button></div>':'')}
+ F.hidden=true;e.hidden=false;if(tut.mi!==undefined&&tut.mi!==tut.i)tut.min=0;tut.mi=tut.i;e.className="tb-"+(tut.min?"top":s.pos)+(tut.min?" tmin":"");
+ const hd='<div class="tt"><b>'+(tut.i+1)+'/'+n+' · '+s.h+'</b><span class="tr">'+(tut.min?'':'<a onclick="endTut()">Salta</a>')+'<button class="tmb" onclick="tutMin()">'+(tut.min?'▸ Apri':'▾')+'</button></span></div>';
+ e.innerHTML=tut.min?hd:hd+'<div>'+(TBUSY?'Sta giocando la squadra Rossa…':s.x)+'</div>'+(s.nx&&!TBUSY?'<div class="tb"><button class="mb" onclick="tutNext()">Avanti ›</button></div>':'')}
+function tutMin(){if(!tut)return;tut.min=!tut.min;draw()}
 function tutPtr(x,t,cs){if(!tut)return;const s=TS[tut.i];if(!s)return;
  if(s.zn){const Z=[[0,4,"DIFESA","#4a7ad8",4],[5,7,"BATTAGLIA","#b49cff",6],[8,12,"ATTACCO","#e0507a",8]];for(const[a,b,lb,col,lr]of Z){const p1=cellXY(a,0),p2=cellXY(b,8),x0=Math.min(p1[0],p2[0]),y0=Math.min(p1[1],p2[1]),x1=Math.max(p1[0],p2[0])+cs,y1=Math.max(p1[1],p2[1])+cs;
    x.globalAlpha=.9;x.lineWidth=Math.max(3,cs*.12);x.strokeStyle=col;x.setLineDash([cs*.3,cs*.18]);x.strokeRect(x0+3,y0+3,x1-x0-6,y1-y0-6);x.setLineDash([]);
@@ -685,12 +713,12 @@ const dCh=(a,b,c,d)=>Math.max(Math.abs(a-c),Math.abs(b-d));
    9 avanzata, 10 avanzata sostenuta, 11 avanzata di squadra, 12 minaccia alla mia ★, 13 occasione sulla ★ nemica, 14 guardia, 15 distanza nemici dalla mia ★,
    16 controllo quadrati, 17 potere, 18 corsa ai 25, 19 impeto, 20 zona d'attacco, 21 artefatti minori, 22 presenza in battaglia, 23 bonus uccisione, 24 bonus artefatto minore, 25 rumore */
 const NW0=[0.894,0.852,1.446,-0.213,0.153,0.728,0.8,-0.149,0.534,3.858,2.302,-0.371,-3.225,1.097,3.16,0.447,4.019,3.029,1.206,0.913,0.964,0.198,2.355,0.795,6.306,0.05];
-const NWT={E:[-0.235, 0.0352, 0.2573, -0.0069, -0.2543, -0.4868, 2.6638, -0.2524, 0.1929, 4.0673, 0.8382, 0.1344, -0.3596, 0.2253, 4.69, 0.2957, 1.5465, 3.1537, 3.7478, 0.3674, 0.0095, 0.6127, 0.5051, 0.724, 0.1181, 0.05, 1.4613, 0.4, 1.4581, 0.4, 0.32, 0.6, 0.6602, 0.277, 2.0454, 0.3732, 2.8322, 0.8334, 2.4866, 2, 4, 0.15],B:[1.5237, 0.6618, 0.9581, -0.2285, 0.3902, -0.0897, 1.2604, -0.5018, 0.3048, 0.7991, 1.3769, 0.3357, -0.6253, 1.7398, 1.1403, 0.6262, 1.5246, 1.4897, 0.3459, -0.206, 4.0897, -0.1132, 0.8338, 0.149, 6.0002, 0.05, 0.48, 1.5031, 1.0681, 0.4, 1.0271, 1.1364, 0.7506, 0.1413, 2.5, 0.24, 4.2479, 0.8606, 2.6604, 1.5, 0, 0]};
+const NWT={E:[-0.1057, -0.005, 0.2849, -0.098, -0.2273, -0.457, 2.442, -0.0427, 0.3605, 4.063, 0.4475, 0.0032, -0.4432, -0.0667, 3.9961, 0.2201, 1.0562, 3.6833, 1.9194, 0.2987, -0.3862, 0.2963, 0.8409, 0.8547, -0.0134, 0.05, 1.0625, 0.4, 1.8258, 0.4186, 0.4308, 0.6, 0.6227, 0.1815, 1.1604, 0.4987, 3.1338, 1.455, 2.9308, 2.8253, 1.6, 0.2097, 0.6913, 0.9513, 1.0004, 0.5235, 0.8055, 0.8618, 3.4538, 1.145, 0.8, 0.4421, 0.24],B:[1.5237, 0.6618, 0.9581, -0.2285, 0.3902, -0.0897, 1.2604, -0.5018, 0.3048, 0.7991, 1.3769, 0.3357, -0.6253, 1.7398, 1.1403, 0.6262, 1.5246, 1.4897, 0.3459, -0.206, 4.0897, -0.1132, 0.8338, 0.149, 6.0002, 0.05, 0.48, 1.5031, 1.0681, 0.4, 1.0271, 1.1364, 0.7506, 0.1413, 2.5, 0.24, 4.2479, 0.8606, 2.6604, 1.5, 0, 0, 1, 0, 1.5, 0, 0, 1, 0, 1.5, 0, 0, 0]};
 let NWs={1:NW0,2:NW0};
 function glLine(r,c,e,H){const dr=H[0]-r,dc=H[1]-c,n=Math.max(Math.abs(dr),Math.abs(dc));if(!n)return true;const orth=dr==0||dc==0,dia=Math.abs(dr)==Math.abs(dc);if(!(orth||dia))return false;
  const mv=CH[e.t].mv;if(n>(orth?mv[0]:mv[1]))return false;if(e.t=='P'&&mana[e.p]>=potCost('P'))return true;const sr=Math.sign(dr),sc=Math.sign(dc);
  for(let i=1;i<n;i++){const a=r+sr*i,b=c+sc*i;if(bd[a][b]||isBlk(a,b,e.p))return false}return true}
-let AIV={1:1,2:1};
+let AIV={1:1,2:1},AIV2={1:1,2:1};
 function glCanHit(q,e){const hit0=()=>rawAt(q.r,q.c).some(z=>z[0]==e.r&&z[1]==e.c);if(hit0())return true;if(q.fz>0)return false;
  const r0=q.r,c0=q.c;let ok=false;for(const[a,b]of rawMv(r0,c0)){if(bd[a][b])continue;bd[r0][c0]=null;q.r=a;q.c=b;bd[a][b]=q;ok=hit0();bd[a][b]=null;q.r=r0;q.c=c0;bd[r0][c0]=q;if(ok)break}return ok}
 function evalS(p,w){const o=p==1?2:1,P=pcs(p),Q=pcs(o),EA=ART[o],HA=ART[p],ag=1+tc/80;
@@ -744,6 +772,26 @@ function evalS(p,w){const o=p==1?2:1,P=pcs(p),Q=pcs(o),EA=ART[o],HA=ART[p],ag=1+
  s+=w[16]*pc+w[17]*(mana[p]-mana[o])/25+w[18]*((mana[p]/25)**2-(mana[o]/25)**2)+w[22]*bz/5;
  let oz=0,oz2=0;for(const q of P)if(p==1?q.r>=8:q.r<=4)oz++;for(const e of Q)if(o==1?e.r>=8:e.r<=4)oz2++;
  s+=w[19]*(imp[p]-imp[o])/20+w[20]*(oz-oz2)/5;
+ if(AIV2[p]){const Y=(i,d)=>w[i]===undefined?d:w[i];const ge2=bd[EA[0]][EA[1]];
+  /* pedine a distanza / ad area: posizioni da cui colpire spesso */
+  for(const q of P){if("ASRN".includes(q.t)){let nt=0;for(const z of rawAt(q.r,q.c))if(bd[z[0]][z[1]]&&bd[z[0]][z[1]].p==o)nt++;s+=Y(42,1)*Math.min(nt,2)*(TH.get(q)>=q.hp?.3:1)}
+   /* Pegaso: avanza solo quando e al sicuro, verso le benedizioni */
+   if(q.t=="P"){const half=p==1?q.r>=7:q.r<=5,safe=TH.get(q)<q.hp;if(half)s+=safe?Y(43,1):-1.5*Y(43,1);
+    if(safe&&MA.some(m=>!m.done&&m.p==p&&rawMv(q.r,q.c).some(t=>t[0]==m.r&&t[1]==m.c)))s+=Y(44,1.5)}
+   /* Cerbero: guardia solo quando serve */
+   if(q.t=="C"&&q.r==HA[0]&&q.c==HA[1]&&dE>4)s-=Y(48,3);
+   /* Pan e Pegaso: incursori verso la stella scoperta */
+   if((q.t=="N"||q.t=="P")&&!ge2&&TH.get(q)<q.hp&&dCh(q.r,q.c,EA[0],EA[1])<=2*MVT[q.t])s+=Y(49,1.5)}
+  /* caccia a Pegaso avversario e tagliare le strade verso le benedizioni */
+  for(const e of Q){let ab=0;for(const m of MA)if(!m.done&&m.p==o&&rawMv(e.r,e.c).some(t=>t[0]==m.r&&t[1]==m.c))ab=1;if(ab)s-=Y(46,1.5)*(e.t=="P"?2:1);
+   if(e.t=="P"){let c=0;for(const q of P)if(dCh(q.r,q.c,e.r,e.c)<=RCH[q.t])c++;s+=Y(45,1.2)*Math.min(c,3)/3}
+   /* concentrare i colpi sulle pedine indebolite */
+   let rc=0;for(const q of P)if(dCh(q.r,q.c,e.r,e.c)<=RCH[q.t]){rc=1;break}if(rc)s+=Y(47,1)*(1-e.hp/Math.max(e.mh,1))}
+  /* momenti della partita: impeto quando un'abilita e vicina, potere quando una passiva e vicina */
+  let gI=99,gP=99;for(const q of P){const a=AB[q.t];if(a&&a.c>imp[p])gI=Math.min(gI,a.c-imp[p]);const pc0=potCost(q.t);if(pc0>mana[p])gP=Math.min(gP,pc0-mana[p])}
+  s+=Y(50,.8)*(oz/5)*(gI<=2?1:.3)+Y(51,.8)*pc*(gP<=3?1:.3)/4;
+  /* spazi liberi: quadrati senza nemici che posso occupare */
+  for(let i=0;i<3;i++)if(!n[i]&&!m[i]){const cc=[1,4,7][i];if(P.some(q=>dCh(q.r,q.c,6,cc)<=MVT[q.t]+1))s+=Y(52,.6)*(i==1?2:1)/2}}
  let mp=0;for(const mm of MA)if(!mm.done&&mm.p==p)for(const q of P){const d=1-dCh(q.r,q.c,mm.r,mm.c)/12;if(d>mp)mp=d}
  return s+w[21]*mp}
 function glReal(p){const o=p==1?2:1,H=ART[p],gd=bd[H[0]][H[1]];const En=pcs(o);let removed=false;
@@ -813,8 +861,8 @@ A:{ro:"Supporto",rd:"Cura e protegge gli Eroi della squadra.",
 S:{ro:"Controllo",rd:"Colpisce un’area a tridente e chiude i passaggi agli avversari.",pl:"serve ⚡{p} · si attiva quando vuoi · 1 volta",
  pd:"Appena hai ⚡{p}, puoi attivarlo quando vuoi (una sola volta per partita): per 2 turni gli avversari non possono attraversare la riga davanti alla tua difesa. Quando è pronto, la sua casella si illumina di giallo.",
  id:"Scegli 3 caselle: per 2 turni gli avversari non possono entrarci né attraversarle."},
-P:{ro:"Esploratore",rd:"Velocissimo: arriva ovunque e raccoglie gli artefatti.",pl:"sempre attivo",
- pd:"Salta sopra pedine e caselle bloccate mentre si muove. Se raccoglie un artefatto minore (scudo o cura) guadagna per sempre +2 attacco e +1 vita.",
+P:{ro:"Esploratore",rd:"Velocissimo: arriva ovunque e raccoglie le benedizioni degli dei.",pl:"sempre attivo",
+ pd:"Salta sopra pedine e caselle bloccate mentre si muove. Se raccoglie una benedizione degli dei (scudo o cura) guadagna per sempre +2 attacco e +1 vita.",
  id:"Recupera 2 vita (non oltre la sua vita massima)."},
 R:{ro:"Controllo",rd:"Avvelena i nemici e chiude le caselle della tua difesa.",
  pd:"Con ⚡{p}, i suoi colpi avvelenano: il nemico colpito perde la sua armatura per 2 turni (e il colpo la ignora).",
@@ -828,7 +876,7 @@ N:{ro:"Supporto",rd:"Potenzia le Bestie e mette fuori gioco i nemici.",
 M:{ro:"Sfondamento",rd:"Sfonda le difese con attacchi enormi.",
  pd:"Con ⚡{p}, finché è nella zona offensiva (le ultime 5 righe) ha +1 attacco e +1 vita.",
  id:"+4 attacco fino alla fine di questo turno."}};
-const FT={E:"Equilibrati e duttili: controllano il territorio, eliminano i nemici e puntano a conquistare potere per sbloccare i passivi.",B:"Mobili e in crescita: poteri leggeri e facili da sbloccare, si rafforzano con artefatti e potenziamenti e cercano un varco per rubare l’artefatto avversario."},FD={Eroe:"Eroi: equilibrati e duttili.",Dio:"Dei: poteri potenti e costosi, che rinforzano gli altri.",Bestia:"Bestie: poteri leggeri, crescono e rubano artefatti."};
+const FT={E:"Equilibrati e duttili: controllano il territorio, eliminano i nemici e puntano a conquistare potere per sbloccare i passivi.",B:"Mobili e in crescita: poteri leggeri e facili da sbloccare, si rafforzano con benedizioni e potenziamenti e cercano un varco per rubare l’artefatto avversario."},FD={Eroe:"Eroi: equilibrati e duttili.",Dio:"Dei: poteri potenti e costosi, che rinforzano gli altri.",Bestia:"Bestie: poteri leggeri, crescono e rubano artefatti."};
 const FC={Eroe:"#e0a030",Dio:"#5aa0ff",Bestia:"#e0605a"};
 const eyes=(y,d,c)=>'<circle cx="'+(50-d)+'" cy="'+y+'" r="4.2" fill="#fff"/><circle cx="'+(50+d)+'" cy="'+y+'" r="4.2" fill="#fff"/><circle cx="'+(50-d)+'" cy="'+y+'" r="2.2" fill="'+(c||"#241408")+'"/><circle cx="'+(50+d)+'" cy="'+y+'" r="2.2" fill="'+(c||"#241408")+'"/>';
 const smile='<path d="M42 64q8 6 16 0" stroke="#4a2410" fill="none" stroke-width="2.6" stroke-linecap="round"/>';
@@ -881,7 +929,7 @@ const glAdd=(p,t)=>{if(!SIM&&LOG&&!LOG.done)LOG.e.push("T"+(Math.floor(tc/2)+1)+
 function glClose(why){if(LOG&&!LOG.done){LOG.done=1;if(LOG.e.length>4){LOG.e.push("FINE "+why);GL.push(LOG.h+"\n"+LOG.e.join("\n"));GL=GL.slice(-12);glSave()}}}
 function glStart(){glClose("ABBANDONATA");if(ai===null||tut)return;
  const tn=t=>(team[t]||[]).join("");
- LOG={done:0,e:[],h:"PARTITA v1 | "+(ai?"contro il computer ("+(lvl?"Esperto":"Normale")+") | TU="+(aiP==2?"Bianco (muove per primo)":"Nero")+" | PC="+(aiP==2?"Nero":"Bianco"):"2 giocatori")+"\nSquadre: Bianco="+tn(1)+" Nero="+tn(2)+" | ★Bianco r"+ART[1][0]+"c"+ART[1][1]+" ★Nero r"+ART[2][0]+"c"+ART[2][1]+"\nLegenda: M=sposta A=attacca X=abilità, coordinate riga,colonna (r0-12,c0-8); S=stato a fine turno (potere/impeto; lettera+vita@r,c)"}}
+ LOG={done:0,e:[],h:"PARTITA v1 | "+(ai?"contro il computer ("+(["Facile","Medio","Difficile"][lvl]||"?")+") | TU="+(aiP==2?"Blu (muove per primo)":"Rossa")+" | PC="+(aiP==2?"Rossa":"Blu"):"2 giocatori")+"\nSquadre: Blu="+tn(1)+" Rossa="+tn(2)+" | ★Blu r"+ART[1][0]+"c"+ART[1][1]+" ★Rossa r"+ART[2][0]+"c"+ART[2][1]+"\nLegenda: M=sposta A=attacca X=abilità, coordinate riga,colonna (r0-12,c0-8); S=stato a fine turno (potere/impeto; lettera+vita@r,c)"}}
 /* ===== Lookahead: simula il mio turno, la risposta migliore dell'avversario (e il mio turno dopo) ===== */
 let SIM=0,SIMW=0,AI3L=null,PLAN=null,LOOK={1:2,2:2},LOOKK=6,LOOKMS=2200,LOOKN=0;
 function glSnap(){const P=[];bd.forEach(r=>r.forEach(q=>q&&P.push([q,Object.assign({},q)])));
@@ -909,7 +957,7 @@ function glPlan(p){const t0=Date.now(),o=p==1?2:1,base=glSnap(),sai=ai,sdr=draw,
  }catch(e){glRest(base);bestSteps=null}
  SIM=0;ai=sai;draw=sdr;glRest(base);LOOKN=done;return bestSteps}
 
-const _pickTeam=pickTeam;pickTeam=function(k){_pickTeam(k);LOOK={1:0,2:0};if(ai==1&&team&&team[aiP])LOOK[aiP]=team[aiP].includes('P')?3:2;PLAN=null;glStart()};
+const _pickTeam=pickTeam;pickTeam=function(k){_pickTeam(k);LOOK={1:0,2:0};if(ai==1&&lvl>=2&&team&&team[aiP])LOOK[aiP]=team[aiP].includes('P')?3:2;PLAN=null;glStart()};
 const _init=init;init=function(){glClose("ABBANDONATA");LOG=null;_init()};
 const _startTut=startTut;startTut=function(){glClose("ABBANDONATA");LOG=null;_startTut()};
 const _mvTo=mvTo;mvTo=function(q,r,c){const f=q.r+","+q.c,t=q.t,p=q.p;glAdd(p,"M "+t+" "+f+">"+r+","+c);return _mvTo(q,r,c)};
@@ -917,13 +965,80 @@ const _attack=attack;attack=function(q,x){glAdd(q.p,"A "+q.t+" "+q.r+","+q.c+">"
 Object.keys(AB).forEach(k=>{const rn=AB[k].run;AB[k].run=function(q,t){let d="";if(Array.isArray(t))d=" "+t.map(z=>(z.r!==undefined?z.r+","+z.c:z[0]+","+z[1])).join(" ");else if(t&&t.r!==undefined)d=" >"+t.t+" "+t.r+","+t.c;glAdd(q.p,"X "+k+" "+q.r+","+q.c+d);return rn(q,t)}});
 const _pbRun=pbRun;pbRun=function(p){glAdd(p,"X S passivo: sbarra la riga davanti alla difesa avversaria");return _pbRun(p)};
 const _endTurn=endTurn;endTurn=function(){if(!SIM&&LOG&&!LOG.done){const f=turn,o=f==1?2:1,sn=p=>pcs(p).map(q=>q.t+q.hp+"@"+q.r+","+q.c).join(" ");LOG.e.push("S T"+(Math.floor(tc/2)+1)+" pot "+mana[1]+"/"+mana[2]+" imp "+imp[1]+"/"+imp[2]+" | B: "+sn(1)+" | N: "+sn(2)+(DEAD.length?" | morti: "+DEAD.map(d=>d.t+(d.p==1?"B":"N")).join(","):""))}return _endTurn()};
-const _win=win;win=function(p,w){if(SIM){SIMW=p||-1;over=true;return}glClose((p?"vince "+(p==1?"Bianco":"Nero"):"pareggio")+(w?" ("+w+")":"")+" al turno "+(Math.floor(tc/2)+1));return _win(p,w)};
+const _win=win;win=function(p,w){if(SIM){SIMW=p||-1;over=true;return}glClose((p?"vince "+(p==1?"Blu":"Rossa"):"pareggio")+(w?" ("+w+")":"")+" al turno "+(Math.floor(tc/2)+1));return _win(p,w)};
 function glText(all){const cur=LOG&&LOG.done&&LOG.e.length>4?[GL[GL.length-1]]:[];return(all?GL:cur.length?cur:GL.slice(-1)).join("\n\n=====\n\n")}
 function glOpen(all){const t=glText(all);el("glt").textContent=t?(all?"Tutte le partite salvate ("+GL.length+")":"Ultima partita")+": premi Copia e incollala nella chat con me.":"Nessuna partita salvata: gioca una partita fino alla fine.";el("gx").value=t;el("gl").style.display="flex"}
 function glCopy(){const x=el("gx");x.focus();x.select();try{x.setSelectionRange(0,x.value.length)}catch(e){}let ok=false;try{ok=document.execCommand("copy")}catch(e){}
  const done=()=>{el("glt").textContent="Copiato ✓ Ora incollalo nella chat con me."};
  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(x.value).then(done,()=>{if(ok)done();else el("glt").textContent="Tieni premuto sul testo, scegli Seleziona tutto e poi Copia."});else if(ok)done();else el("glt").textContent="Tieni premuto sul testo, scegli Seleziona tutto e poi Copia."}
 const _draft=draft;draft=function(){_draft();if(ai===null){el("dr").innerHTML+='<button class="mb sec" onclick="glOpen(true)">📜 Le mie partite ('+GL.length+')</button>'}};
+
+/* ===== Animazioni, suoni, annulla, cronologia ===== */
+let FX=[],MOVA=new Map(),FLASH=new Map(),UNDOS=[];
+const NOW=()=>(typeof performance!="undefined"?performance.now():Date.now());
+const fxOn=()=>!!CTX&&!SIM;
+function fxAdd(o){if(!fxOn())return;o.t0=NOW();FX.push(o);if(FX.length>60)FX.shift()}
+/* --- suoni --- */
+let SND={on:true,ctx:null};try{SND.on=localStorage.getItem("mitoSnd")!=="0"}catch(e){}
+function sndCtx(){if(!SND.ctx){try{const C=window.AudioContext||window.webkitAudioContext;if(C)SND.ctx=new C()}catch(e){}}if(SND.ctx&&SND.ctx.state=="suspended")try{SND.ctx.resume()}catch(e){}return SND.ctx}
+function tone(f,d,ty,v,f2,dl){const c=SND.ctx;if(!c)return;const t=c.currentTime+(dl||0),o=c.createOscillator(),g=c.createGain();o.type=ty||"sine";o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);
+ g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v||.06,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.02)}
+function noise(d,v,fq,dl){const c=SND.ctx;if(!c)return;const t=c.currentTime+(dl||0),n=Math.floor(c.sampleRate*d),b=c.createBuffer(1,n,c.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*(1-i/n);
+ const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();f.type="lowpass";f.frequency.value=fq||900;g.gain.value=v||.08;s.buffer=b;s.connect(f);f.connect(g);g.connect(c.destination);s.start(t)}
+function sfx(k){if(!SND.on||SIM||!SND.ctx||(typeof tut!="undefined"&&false))return;try{({
+ sel:()=>tone(660,.05,"triangle",.025),
+ move:()=>{tone(420,.09,"triangle",.05,300);noise(.05,.03,1200)},
+ hit:()=>{noise(.12,.11,700);tone(150,.14,"sine",.07,80)},
+ block:()=>{tone(1047,.25,"sine",.05);tone(1568,.3,"sine",.035,0,.03)},
+ death:()=>{tone(330,.45,"sawtooth",.035,70);noise(.25,.05,500,.05)},
+ pick:()=>{[784,988,1319].forEach((f,i)=>tone(f,.18,"sine",.045,0,i*.07))},
+ ab:()=>{tone(392,.3,"triangle",.05,880);noise(.25,.04,2500)},
+ turn:()=>{tone(523,.22,"sine",.035);tone(784,.3,"sine",.03,0,.08)},
+ undo:()=>tone(500,.12,"triangle",.04,350),
+ win:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.35,"triangle",.06,0,i*.13))},
+ gain:()=>tone(880,.12,"sine",.03,1100)}[k]||(()=>{}))()}catch(e){}}
+function sndToggle(){SND.on=!SND.on;try{localStorage.setItem("mitoSnd",SND.on?"1":"0")}catch(e){}sndCtx();if(SND.on)sfx("sel");const b=el("snBtn");if(b)b.textContent=SND.on?"🔊":"🔇"}
+try{window.addEventListener("pointerdown",()=>{if(SND.on)sndCtx()},{capture:true})}catch(e){}
+/* --- agganci al motore --- */
+const humanTurn=()=>!(ai&&turn==aiP)&&!(typeof TBUSY!="undefined"&&TBUSY);
+const _fxMv=mvTo;mvTo=function(q,r,c){const r0=q.r,c0=q.c;
+ if(!SIM&&CTX&&humanTurn()&&!over&&typeof glSnap=="function"){try{UNDOS.push({S:glSnap(),tc,turn,L:(typeof LOG!="undefined"&&LOG&&LOG.e)?LOG.e.length:-1})}catch(e){}}
+ const mb=MA.filter(m=>!m.done).length,res=_fxMv(q,r,c);
+ if(fxOn()){MOVA.set(q,{r0,c0,t0:NOW(),fly:q.t=="P"});sfx("move");if(MA.filter(m=>!m.done).length<mb){fxAdd({k:"pick",r,c,col:MA.find(m=>m.r==r&&m.c==c&&m.k=="s")?"#ffd23a":"#6aff9a",d:900});setTimeout(()=>sfx("pick"),120)}}
+ return res};
+const _fxHit=hit;hit=function(x,d,by){const r=x.r,c=x.c,h0=x.hp;const n=_fxHit(x,d,by);
+ if(fxOn()){if(n<0){fxAdd({k:"txt",r,c,s:"Parato!",col:"#ffd23a",d:1100});fxAdd({k:"ring",r,c,col:"#ffd23a",d:600});sfx("block")}
+  else{fxAdd({k:"txt",r,c,s:"−"+n,col:"#ff5a4a",d:1000});FLASH.set(x,NOW());sfx("hit");
+   if(x.hp<=0&&h0>0){fxAdd({k:"die",r,c,t:x.t,p:x.p,d:750});setTimeout(()=>sfx("death"),90)}}}
+ return n};
+const _fxAtk=attack;attack=function(q,x){if(!SIM)UNDOS=[];if(fxOn())fxAdd({k:"lunge",q,tr:x?x.r:q.r,tc2:x?x.c:q.c,d:260});return _fxAtk(q,x)};
+const _fxEv=eventLog;eventLog=function(t){_fxEv(t);if(SIM)return;if(/usa la sua abilit|blocca \d|sbarra/.test(t)){UNDOS=[];const k=Object.keys(CH).find(z=>t.startsWith(CH[z].n));const q=k&&has(turn,k);if(fxOn()&&q){fxAdd({k:"ring",r:q.r,c:q.c,col:"#ff9a3a",d:800,big:1});sfx("ab")}}
+ if(/ rinasce$/.test(t)&&fxOn()){const k=Object.keys(CH).find(z=>t.startsWith(CH[z].n));const q=k&&has(turn,k);if(q)fxAdd({k:"ring",r:q.r,c:q.c,col:"#9cffd0",d:900,big:1})}};
+const _fxST=startTurn;startTurn=function(p){const m0=mana[p],i0=imp[p];const res=_fxST(p);const dm=mana[p]-m0,di=imp[p]-i0;
+ if(!SIM&&(dm>0||di>0)){eventLog("Guadagna "+(dm>0?"+"+dm+" ⚡":"")+(dm>0&&di>0?" e ":"")+(di>0?"+"+di+" 🔥":""));if(fxOn()){fxAdd({k:"gain",p,s:(dm>0?"+"+dm+" ⚡  ":"")+(di>0?"+"+di+" 🔥":""),d:1500});setTimeout(()=>sfx("gain"),350)}}
+ return res};
+const _fxET=endTurn;endTurn=function(){UNDOS=[];const r=_fxET();if(fxOn()&&!over){fxAdd({k:"ban",s:"Tocca alla squadra "+(turn==1?"Blu":"Rossa"),p:turn,d:1100});sfx("turn")}return r};
+const _fxWin=win;win=function(p,w){const r=_fxWin(p,w);if(fxOn()&&p){fxAdd({k:"ban",s:"Vince la squadra "+(p==1?"Blu":"Rossa")+"!",p,d:2600});const a=ART[p==1?2:1];fxAdd({k:"ring",r:a[0],c:a[1],col:"#ffd23a",d:1400,big:2});sfx("win")}return r};
+function undoMv(){if(over||!UNDOS.length||!humanTurn())return;const u=UNDOS.pop();if(u.tc!==tc||u.turn!==turn){UNDOS=[];draw();return}
+ glRest(u.S);PRV=null;MOVA.clear();if(typeof LOG!="undefined"&&LOG&&u.L>=0){LOG.e.length=u.L;LOG.e.push("T"+(Math.floor(tc/2)+1)+" "+(turn==1?"B":"N")+" "+glWho(turn)+" U annulla l’ultima mossa")}sfx("undo");draw()}
+/* --- disegno effetti --- */
+const ease=k=>1-Math.pow(1-k,3);
+function pieceOff(q,cs,now){const a=MOVA.get(q);if(!a)return null;const k=(now-a.t0)/280;if(k>=1){MOVA.delete(q);return null}const[x0,y0]=cellXY(a.r0,a.c0),[x1,y1]=cellXY(q.r,q.c),e=ease(k);return{dx:(x0-x1)*(1-e),dy:(y0-y1)*(1-e)-(a.fly?Math.sin(Math.PI*k)*cs*.6:0),sc:a.fly?1+Math.sin(Math.PI*k)*.18:1}}
+function drawFX(x,cs,now){FX=FX.filter(f=>now-f.t0<f.d);
+ for(const f of FX){const k=(now-f.t0)/f.d;
+  if(f.k=="txt"){const[px,py]=cellXY(f.r,f.c);x.globalAlpha=Math.min(1,2.2*(1-k));x.font="bold "+Math.round(cs*.52)+"px Georgia,serif";x.textAlign="center";x.textBaseline="middle";const y=py+cs*.2-k*cs*.8;x.lineWidth=Math.max(3,cs*.1);x.strokeStyle="#1a0a04";x.strokeText(f.s,px+cs/2,y);x.fillStyle=f.col;x.fillText(f.s,px+cs/2,y)}
+  else if(f.k=="ring"){const[px,py]=cellXY(f.r,f.c);x.globalAlpha=1-k;x.lineWidth=Math.max(2,cs*.1)*(1-k*.5);x.strokeStyle=f.col;x.beginPath();x.arc(px+cs/2,py+cs/2,cs*(.45+k*(f.big?.6*f.big:.35)),0,7);x.stroke()}
+  else if(f.k=="pick"){const[px,py]=cellXY(f.r,f.c),cx=px+cs/2,cy=py+cs/2;x.globalAlpha=1-k;x.fillStyle=f.col;for(let i=0;i<10;i++){const a=i/10*6.283+k*2,R=cs*(.2+k*.9);x.beginPath();x.arc(cx+Math.cos(a)*R,cy+Math.sin(a)*R,cs*.07*(1-k)+1,0,7);x.fill()}}
+  else if(f.k=="die"){const[px,py]=cellXY(f.r,f.c),cx=px+cs/2,cy=py+cs/2,R=cs*.43*(1-k*.6);x.globalAlpha=(1-k)*.9;x.fillStyle=f.p==1?"#2a74d6":"#8a1c4c";x.beginPath();x.arc(cx,cy-k*cs*.3,R,0,7);x.fill();
+   const im=tokImg(f.t);if(im.complete&&im.naturalWidth){x.save();x.beginPath();x.arc(cx,cy-k*cs*.3,R*.86,0,7);x.clip();x.filter="grayscale(1)";x.drawImage(im,cx-R*.86,cy-k*cs*.3-R*.86,R*1.72,R*1.72);x.restore()}
+   x.fillStyle="#ffffffaa";for(let i=0;i<8;i++){const a=i/8*6.283,D=cs*(.3+k*.5);x.beginPath();x.arc(cx+Math.cos(a)*D,cy+Math.sin(a)*D,cs*.05*(1-k)+.5,0,7);x.fill()}}
+  else if(f.k=="gain"){const by=f.p==(flip()?2:1)?LAY.by+13*cs-cs*.6:LAY.by+cs*.6;x.globalAlpha=Math.min(1,3*(1-k));x.font="bold "+Math.round(cs*.55)+"px Georgia,serif";x.textAlign="center";x.textBaseline="middle";const y=by-(f.p==(flip()?2:1)?1:-1)*k*cs*.6;x.lineWidth=4;x.strokeStyle="#1a0a04";x.strokeText(f.s,LAY.bx+4.5*cs,y);x.fillStyle="#ffe08a";x.fillText(f.s,LAY.bx+4.5*cs,y)}
+  else if(f.k=="ban"){const a=k<.15?k/.15:k>.75?(1-k)/.25:1;x.globalAlpha=Math.max(0,a);const w=9*cs,h=cs*1.15,y=LAY.by+6.5*cs-h/2;x.fillStyle="#170e09e6";x.fillRect(LAY.bx,y,w,h);x.fillStyle=f.p==1?"#4aa8ff":"#ff4b4b";x.fillRect(LAY.bx,y,w,3);x.fillRect(LAY.bx,y+h-3,w,3);
+   x.font="bold "+Math.round(cs*.5)+"px Georgia,serif";x.textAlign="center";x.textBaseline="middle";x.fillStyle="#ffe9b8";x.fillText(f.s,LAY.bx+w/2,y+h/2)}}
+ x.globalAlpha=1}
+
+const _amb=aiMoveBest;aiMoveBest=function(p){if(lvl===0&&ai&&!SIM&&Math.random()<.4){const C=[];for(const q of pcs(p))if(canMv(q))for(const[a,b]of rawMv(q.r,q.c))C.push({r:q.r,c:q.c,a,b});if(C.length)return C[Math.floor(Math.random()*C.length)]}return _amb(p)};
+const _aab=aiAtkBest;aiAtkBest=function(p){if(lvl===0&&ai&&!SIM&&Math.random()<.3)return null;return _aab(p)};
 
 init();initScene();let firstT=false;try{firstT=!localStorage.getItem("mitoTut")}catch(e){}if(firstT){try{startTut()}catch(e){tut=null}}
 </script></body></html>
